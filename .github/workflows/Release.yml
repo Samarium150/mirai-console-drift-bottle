@@ -1,0 +1,51 @@
+name: Release
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push events
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+
+    name: Create Release
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      # Checkout repository
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      # Get tag version from ref
+      - name: Get tag version
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+
+      # Setup JDK
+      - name: Setup Java JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 11
+
+      # Validate Gradle Wrapper
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1.0.4
+
+      # Build
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+      - name: Build with Gradle
+        run: ./gradlew buildPlugin
+
+      # Create Release
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: ./build/mirai/mirai-console-drift-bottle-${{ steps.vars.outputs.tag }}.mirai.jar
+          artifactContentType: application/jar
+          tag: ${{ steps.vars.outputs.tag }}
+          token: ${{ secrets.GITHUB_TOKEN }}
