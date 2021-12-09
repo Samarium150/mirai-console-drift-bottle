@@ -16,6 +16,14 @@
  */
 package com.github.samarium150
 
+import com.github.samarium150.command.JumpInto
+import com.github.samarium150.command.Pickup
+import com.github.samarium150.command.ThrowAway
+import com.github.samarium150.config.GeneralConfig
+import com.github.samarium150.config.ReplyConfig
+import com.github.samarium150.data.Sea
+import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
+import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.utils.info
@@ -23,7 +31,7 @@ import net.mamoe.mirai.utils.info
 object MiraiConsoleDriftBottle : KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-drift-bottle",
-        name = "Mirai Console Drift Bottle",
+        name = "Drift Bottle",
         version = "1.0.0",
     ) {
         author("Samarium150")
@@ -31,10 +39,25 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
     }
 ) {
     override fun onEnable() {
+        // 重载数据
+        GeneralConfig.reload()
+        ReplyConfig.reload()
+        Sea.reload()
+
+        // 注册命令
+        JumpInto.register()
+        Pickup.register()
+        ThrowAway.register()
+
         logger.info { "Plugin loaded" }
     }
 
     override fun onDisable() {
+        // 注销命令
+        JumpInto.unregister()
+        Pickup.unregister()
+        ThrowAway.unregister()
+
         logger.info { "Plugin unloaded" }
     }
 }
