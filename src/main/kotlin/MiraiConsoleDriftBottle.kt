@@ -19,6 +19,7 @@ package com.github.samarium150
 import com.github.samarium150.command.JumpInto
 import com.github.samarium150.command.Pickup
 import com.github.samarium150.command.ThrowAway
+import com.github.samarium150.config.CommandConfig
 import com.github.samarium150.config.GeneralConfig
 import com.github.samarium150.config.ReplyConfig
 import com.github.samarium150.data.Sea
@@ -32,7 +33,7 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-drift-bottle",
         name = "Drift Bottle",
-        version = "1.0.0",
+        version = "1.0.1",
     ) {
         author("Samarium150")
         info("简单的漂流瓶插件")
@@ -42,6 +43,7 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
         // 重载数据
         GeneralConfig.reload()
         ReplyConfig.reload()
+        CommandConfig.reload()
         Sea.reload()
 
         // 注册命令
