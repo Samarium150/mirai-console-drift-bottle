@@ -14,15 +14,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package com.github.samarium150.data
+package io.github.samarium150.mirai.plugin
 
-import net.mamoe.mirai.console.data.AutoSavePluginData
-import net.mamoe.mirai.console.data.ValueDescription
-import net.mamoe.mirai.console.data.value
+import net.mamoe.mirai.console.MiraiConsole
+import net.mamoe.mirai.console.plugin.PluginManager.INSTANCE.enable
+import net.mamoe.mirai.console.plugin.PluginManager.INSTANCE.load
+import net.mamoe.mirai.console.terminal.MiraiConsoleTerminalLoader
+import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 
-object Sea : AutoSavePluginData("Sea") {
+@ConsoleExperimentalApi
+suspend fun main() {
 
-    @ValueDescription("海里的所有物品")
-    val contents: MutableList<Item> by value()
+    MiraiConsoleTerminalLoader.startAsDaemon()
 
+    val pluginInstance = MiraiConsoleDriftBottle
+
+    pluginInstance.load()
+    pluginInstance.enable()
+
+    MiraiConsole.job.join()
 }

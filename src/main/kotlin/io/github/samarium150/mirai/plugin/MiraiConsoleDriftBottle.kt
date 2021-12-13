@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package com.github.samarium150
+package io.github.samarium150.mirai.plugin
 
-import com.github.samarium150.command.JumpInto
-import com.github.samarium150.command.Pickup
-import com.github.samarium150.command.ThrowAway
-import com.github.samarium150.config.CommandConfig
-import com.github.samarium150.config.GeneralConfig
-import com.github.samarium150.config.ReplyConfig
-import com.github.samarium150.data.Sea
+import io.github.samarium150.mirai.plugin.command.JumpInto
+import io.github.samarium150.mirai.plugin.command.Pickup
+import io.github.samarium150.mirai.plugin.command.ThrowAway
+import io.github.samarium150.mirai.plugin.config.CommandConfig
+import io.github.samarium150.mirai.plugin.config.GeneralConfig
+import io.github.samarium150.mirai.plugin.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.data.Sea
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
@@ -31,9 +31,9 @@ import net.mamoe.mirai.utils.info
 
 object MiraiConsoleDriftBottle : KotlinPlugin(
     JvmPluginDescription(
-        id = "com.github.samarium150.mirai-console-drift-bottle",
+        id = "io.github.samarium150.mirai.plugin.mirai-console-drift-bottle",
         name = "Drift Bottle",
-        version = "1.0.1",
+        version = "1.0.2",
     ) {
         author("Samarium150")
         info("简单的漂流瓶插件")

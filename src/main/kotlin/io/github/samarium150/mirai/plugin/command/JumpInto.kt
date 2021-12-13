@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package com.github.samarium150.command
+package io.github.samarium150.mirai.plugin.command
 
-import com.github.samarium150.MiraiConsoleDriftBottle
-import com.github.samarium150.config.CommandConfig
-import com.github.samarium150.config.ReplyConfig
-import com.github.samarium150.data.Item
-import com.github.samarium150.data.Owner
-import com.github.samarium150.data.Sea
-import com.github.samarium150.data.Source
+import io.github.samarium150.mirai.plugin.MiraiConsoleDriftBottle
+import io.github.samarium150.mirai.plugin.config.CommandConfig
+import io.github.samarium150.mirai.plugin.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.data.Item
+import io.github.samarium150.mirai.plugin.data.Owner
+import io.github.samarium150.mirai.plugin.data.Sea
+import io.github.samarium150.mirai.plugin.data.Source
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors

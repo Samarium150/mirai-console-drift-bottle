@@ -14,23 +14,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package com.github.samarium150
+package io.github.samarium150.mirai.plugin.data
 
-import net.mamoe.mirai.console.MiraiConsole
-import net.mamoe.mirai.console.plugin.PluginManager.INSTANCE.enable
-import net.mamoe.mirai.console.plugin.PluginManager.INSTANCE.load
-import net.mamoe.mirai.console.terminal.MiraiConsoleTerminalLoader
-import net.mamoe.mirai.console.util.ConsoleExperimentalApi
+import kotlinx.serialization.Serializable
 
-@ConsoleExperimentalApi
-suspend fun main() {
-
-    MiraiConsoleTerminalLoader.startAsDaemon()
-
-    val pluginInstance = MiraiConsoleDriftBottle
-
-    pluginInstance.load()
-    pluginInstance.enable()
-
-    MiraiConsole.job.join()
+@Serializable
+data class Owner(val id: Long, val name: String, val avatarUrl: String) {
+    override fun toString(): String {
+        return "$name($id)"
+    }
 }
