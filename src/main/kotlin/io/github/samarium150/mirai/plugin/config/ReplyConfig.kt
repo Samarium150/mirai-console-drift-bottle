@@ -49,4 +49,7 @@ object ReplyConfig : AutoSavePluginConfig("Reply") {
             "不知何处涌来一股暗流，你失去了意识。"
     )
 
+    @ValueDescription("等待漂流瓶内容的回复")
+    val waitForNextMessage: String by value("请把想说的话写在纸条上发送出来吧~")
+
 }

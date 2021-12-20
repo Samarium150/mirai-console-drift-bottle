@@ -30,8 +30,8 @@ import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.message.data.Message
 import net.mamoe.mirai.message.data.MessageChain.Companion.serializeToJsonString
-import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.message.data.messageChainOf
 import net.mamoe.mirai.message.nextMessage
 
@@ -49,28 +49,29 @@ object ThrowAway : SimpleCommand(
     @Suppress("unused")
     @Handler
     suspend fun CommandSenderOnMessage<*>.handle(vararg messages: Message = arrayOf()) {
-        val commandSender = fromEvent.sender
-        val group = fromEvent.subject
+        val sender = fromEvent.sender
+        val subject = fromEvent.subject
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
         else {
-                group.sendMessage("请输入你想放入漂流瓶的内容")
-                fromEvent.nextMessage(30_000)
+            sendMessage(ReplyConfig.waitForNextMessage)
+            fromEvent.nextMessage(30_000)
         }
-
         val owner = Owner(
-            commandSender.id,
-            commandSender.nick,
-            commandSender.avatarUrl
+            sender.id,
+            sender.nick,
+            sender.avatarUrl
         )
-        val source = if (group is Group) Source(
-            group.id,
-            group.name
+        val source = if (subject is Group) Source(
+            subject.id,
+            subject.name
         ) else null
         val bottle = Item(Item.Type.BOTTLE, owner, source, chain.serializeToJsonString())
         Sea.contents.add(bottle)
-        val builder = MessageChainBuilder()
         val parts = ReplyConfig.throwAway.split("%content")
-        builder.append(PlainText(parts[0])).append(chain).append(parts[1])
-        sendMessage(builder.asMessageChain())
+        sendMessage(buildMessageChain {
+            +PlainText(parts[0])
+            +chain
+            +PlainText(parts[1])
+        })
     }
 }
