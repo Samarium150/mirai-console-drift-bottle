@@ -58,7 +58,7 @@ object ThrowAway : SimpleCommand(
             try {
                 fromEvent.nextMessage(30_000)
             } catch (e: TimeoutCancellationException) {
-                subject.sendMessage(ReplyConfig.timeoutMessage)
+                sendMessage(ReplyConfig.timeoutMessage)
                 return
             }
         }
