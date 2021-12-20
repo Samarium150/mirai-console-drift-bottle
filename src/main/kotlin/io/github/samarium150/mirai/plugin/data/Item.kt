@@ -21,7 +21,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.contact.Contact
-import net.mamoe.mirai.message.data.*
+import net.mamoe.mirai.message.data.MessageChain
+import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import java.io.ByteArrayOutputStream
 import java.net.URL
@@ -58,7 +60,7 @@ class Item {
     }
 
     suspend fun toMessageChain(contact: Contact?): MessageChain {
-        val message = buildMessageChain {
+        return buildMessageChain {
             when (type) {
                 Type.BOTTLE -> {
                     var from = "$owner"
@@ -82,7 +84,7 @@ class Item {
                         inputStream.uploadAsImage(contact)
                     } else null
                     if (img != null) add(img)
-                   add(
+                    add(
                         PlainText(
                             ReplyConfig.pickupBody
                                 .replace("%who", owner.name)
@@ -102,7 +104,5 @@ class Item {
                 }
             }
         }
-
-        return message
     }
 }

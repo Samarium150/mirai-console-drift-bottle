@@ -54,8 +54,11 @@ object ThrowAway : SimpleCommand(
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
         else {
             sendMessage(ReplyConfig.waitForNextMessage)
-            kotlin.runCatching { fromEvent.nextMessage(30_000) }
-                .onFailure { sendMessage(ReplyConfig.timeoutMessage) }.getOrNull() ?: return
+            runCatching {
+                fromEvent.nextMessage(30_000)
+            }.onFailure {
+                sendMessage(ReplyConfig.timeoutMessage)
+            }.getOrNull() ?: return
         }
         val owner = Owner(
             sender.id,
