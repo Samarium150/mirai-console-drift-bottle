@@ -52,6 +52,6 @@ object ReplyConfig : AutoSavePluginConfig("Reply") {
     @ValueDescription("等待漂流瓶内容的回复")
     val waitForNextMessage: String by value("请把想说的话写在纸条上发送出来吧~")
 
-    @ValueDescription("等待漂流瓶内容的回复")
+    @ValueDescription("等待漂流瓶内容超时的回复")
     val timeoutMessage: String by value("是不是没有还没有想到要写什么呢？那待会再找我也行哦")
 }
