@@ -28,7 +28,6 @@ import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.contact.User
 
 object JumpInto : SimpleCommand(
     MiraiConsoleDriftBottle,
@@ -43,17 +42,19 @@ object JumpInto : SimpleCommand(
     @Suppress("unused")
     @Handler
     suspend fun CommandSender.handle() {
-        val owner = if (user != null) Owner(
-            (user as User).id,
-            (user as User).nick,
-            (user as User).avatarUrl,
-        ) else null
-        if (owner == null)
+        val sender = user
+        if (sender == null)
             sendMessage(ReplyConfig.jumpInto.replace("%num", Sea.contents.size.toString()))
         else {
+            val subject = subject
+            val owner = Owner(
+                sender.id,
+                sender.nick,
+                sender.avatarUrl
+            )
             val source = if (subject is Group) Source(
-                (subject as Group).id,
-                (subject as Group).name,
+                subject.id,
+                subject.name
             ) else null
             val body = Item(Item.Type.BODY, owner, source)
             Sea.contents.add(body)

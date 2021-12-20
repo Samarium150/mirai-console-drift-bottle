@@ -28,12 +28,13 @@ import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.Message
 import net.mamoe.mirai.message.data.MessageChain.Companion.serializeToJsonString
-import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.message.data.messageChainOf
+import net.mamoe.mirai.message.nextMessage
+
 
 object ThrowAway : SimpleCommand(
     MiraiConsoleDriftBottle,
@@ -47,22 +48,34 @@ object ThrowAway : SimpleCommand(
 
     @Suppress("unused")
     @Handler
-    suspend fun CommandSenderOnMessage<*>.handle(vararg messages: Message) {
-        val chain = messageChainOf(*messages)
-        val owner = if (user != null) Owner(
-            (user as User).id,
-            (user as User).nick,
-            (user as User).avatarUrl,
-        ) else return
+    suspend fun CommandSenderOnMessage<*>.handle(vararg messages: Message = arrayOf()) {
+        val sender = fromEvent.sender
+        val subject = fromEvent.subject
+        val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
+        else {
+            sendMessage(ReplyConfig.waitForNextMessage)
+            runCatching {
+                fromEvent.nextMessage(30_000)
+            }.onFailure {
+                sendMessage(ReplyConfig.timeoutMessage)
+            }.getOrNull() ?: return
+        }
+        val owner = Owner(
+            sender.id,
+            sender.nick,
+            sender.avatarUrl
+        )
         val source = if (subject is Group) Source(
-            (subject as Group).id,
-            (subject as Group).name,
+            subject.id,
+            subject.name
         ) else null
         val bottle = Item(Item.Type.BOTTLE, owner, source, chain.serializeToJsonString())
         Sea.contents.add(bottle)
-        val builder = MessageChainBuilder()
         val parts = ReplyConfig.throwAway.split("%content")
-        builder.append(PlainText(parts[0])).append(chain).append(parts[1])
-        sendMessage(builder.asMessageChain())
+        sendMessage(buildMessageChain {
+            +PlainText(parts[0])
+            +chain
+            +PlainText(parts[1])
+        })
     }
 }

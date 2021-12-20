@@ -22,9 +22,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.data.MessageChain
-import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.message.data.toMessageChain
+import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import java.io.ByteArrayOutputStream
 import java.net.URL
@@ -61,53 +60,49 @@ class Item {
     }
 
     suspend fun toMessageChain(contact: Contact?): MessageChain {
-        val builder = MessageChainBuilder()
-        when (type) {
-            Type.BOTTLE -> {
-                var from = "$owner"
-                if (source != null)
-                    from = "${source}的" + from
-                else
-                    from += "悄悄留下"
-                builder.append(
-                    PlainText(
-                        ReplyConfig.pickupBottle.replace("%source", from)
+        return buildMessageChain {
+            when (type) {
+                Type.BOTTLE -> {
+                    var from = "$owner"
+                    if (source != null)
+                        from = "${source}的" + from
+                    else
+                        from += "悄悄留下"
+                    add(ReplyConfig.pickupBottle.replace("%source", from))
+                    add(MessageChain.deserializeFromJsonString(content!!))
+                }
+                Type.BODY -> {
+                    val img = if (contact != null) {
+                        val avatar = withContext(Dispatchers.IO) {
+                            ImageIO.read(URL(owner.avatarUrl))
+                        }
+                        val inputStream = withContext(Dispatchers.IO) {
+                            val byteArrayOutputStream = ByteArrayOutputStream()
+                            ImageIO.write(avatar, "jpg", byteArrayOutputStream)
+                            byteArrayOutputStream.toByteArray().inputStream()
+                        }
+                        inputStream.uploadAsImage(contact)
+                    } else null
+                    if (img != null) add(img)
+                    add(
+                        PlainText(
+                            ReplyConfig.pickupBody
+                                .replace("%who", owner.name)
+                                .replace(
+                                    "%time",
+                                    Date(timestamp)
+                                        .toInstant()
+                                        .atZone(ZoneId.systemDefault())
+                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                                )
+                        )
                     )
-                )
-                builder.append(MessageChain.deserializeFromJsonString(content!!))
-            }
-            Type.BODY -> {
-                val img = if (contact != null) {
-                    val avatar = withContext(Dispatchers.IO) {
-                        ImageIO.read(URL(owner.avatarUrl))
-                    }
-                    val inputStream = withContext(Dispatchers.IO) {
-                        val byteArrayOutputStream = ByteArrayOutputStream()
-                        ImageIO.write(avatar, "jpg", byteArrayOutputStream)
-                        byteArrayOutputStream.toByteArray().inputStream()
-                    }
-                    inputStream.uploadAsImage(contact)
-                } else null
-                if (img != null) builder.append(img)
-                builder.append(
-                    PlainText(
-                        ReplyConfig.pickupBody
-                            .replace("%who", owner.name)
-                            .replace(
-                                "%time",
-                                Date(timestamp)
-                                    .toInstant()
-                                    .atZone(ZoneId.systemDefault())
-                                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                            )
-                    )
-                )
-                val where = if (source != null)
-                    ReplyConfig.inGroup.replace("%group", source.toString())
-                else ReplyConfig.inPrivate
-                builder.append(PlainText(where))
+                    val where = if (source != null)
+                        ReplyConfig.inGroup.replace("%group", source.toString())
+                    else ReplyConfig.inPrivate
+                    add(where)
+                }
             }
         }
-        return builder.toMessageChain()
     }
 }
