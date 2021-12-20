@@ -54,4 +54,8 @@ object ReplyConfig : AutoSavePluginConfig("Reply") {
 
     @ValueDescription("等待漂流瓶内容超时的回复")
     val timeoutMessage: String by value("是不是没有还没有想到要写什么呢？那待会再找我也行哦")
+
+    @ValueDescription("漂流瓶内容不合规的回复")
+    val invalidMessage: String by value("不要往瓶子里塞奇怪的东西哦~")
+
 }

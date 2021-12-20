@@ -14,18 +14,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.config
+package io.github.samarium150.mirai.plugin.data
 
-import net.mamoe.mirai.console.data.AutoSavePluginConfig
-import net.mamoe.mirai.console.data.ValueDescription
+import net.mamoe.mirai.console.data.AutoSavePluginData
+import net.mamoe.mirai.console.data.ValueName
 import net.mamoe.mirai.console.data.value
 
-object GeneralConfig : AutoSavePluginConfig("General") {
 
-    @ValueDescription("捡起漂流瓶不减少物品总数")
-    val incremental by value(true)
+object ContentCensorToken : AutoSavePluginData("ContentCensorToken") {
 
-    @ValueDescription("是否启用内容审核")
-    val enableContentCensor by value(false)
+    var timestamp: Long by value(0L)
+
+    @ValueName("expires_in")
+    var expiresIn: Long by value(0L)
+
+    @ValueName("access_token")
+    var accessToken: String by value("")
 
 }

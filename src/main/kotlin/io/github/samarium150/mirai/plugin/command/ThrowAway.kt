@@ -18,11 +18,13 @@ package io.github.samarium150.mirai.plugin.command
 
 import io.github.samarium150.mirai.plugin.MiraiConsoleDriftBottle
 import io.github.samarium150.mirai.plugin.config.CommandConfig
+import io.github.samarium150.mirai.plugin.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.data.Item
 import io.github.samarium150.mirai.plugin.data.Owner
 import io.github.samarium150.mirai.plugin.data.Sea
 import io.github.samarium150.mirai.plugin.data.Source
+import io.github.samarium150.mirai.plugin.util.ContentCensor
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
@@ -42,6 +44,9 @@ object ThrowAway : SimpleCommand(
     secondaryNames = CommandConfig.throwAway,
     description = "丢出漂流瓶"
 ) {
+
+    private val logger = MiraiConsoleDriftBottle.logger
+
     @ConsoleExperimentalApi
     @ExperimentalCommandDescriptors
     override val prefixOptional = true
@@ -59,6 +64,14 @@ object ThrowAway : SimpleCommand(
             }.onFailure {
                 sendMessage(ReplyConfig.timeoutMessage)
             }.getOrNull() ?: return
+        }
+        if (GeneralConfig.enableContentCensor) runCatching {
+            if (!ContentCensor.determine(chain)) {
+                sendMessage(ReplyConfig.invalidMessage)
+                return
+            }
+        }.onFailure {
+            logger.error(it)
         }
         val owner = Owner(
             sender.id,

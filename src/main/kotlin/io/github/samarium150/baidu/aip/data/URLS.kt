@@ -14,18 +14,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.config
+package io.github.samarium150.baidu.aip.data
 
-import net.mamoe.mirai.console.data.AutoSavePluginConfig
-import net.mamoe.mirai.console.data.ValueDescription
-import net.mamoe.mirai.console.data.value
-
-object GeneralConfig : AutoSavePluginConfig("General") {
-
-    @ValueDescription("捡起漂流瓶不减少物品总数")
-    val incremental by value(true)
-
-    @ValueDescription("是否启用内容审核")
-    val enableContentCensor by value(false)
-
+enum class URLS(val url: String) {
+    OAUTH("https://aip.baidubce.com/oauth/2.0/token"),
+    IMAGE_CENSOR("https://aip.baidubce.com/rest/2.0/solution/v1/img_censor/v2/user_defined"),
+    TEXT_CENSOR("https://aip.baidubce.com/rest/2.0/solution/v1/text_censor/v2/user_defined")
 }
