@@ -28,12 +28,13 @@ import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.Message
 import net.mamoe.mirai.message.data.MessageChain.Companion.serializeToJsonString
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.messageChainOf
+import net.mamoe.mirai.message.nextMessage
+
 
 object ThrowAway : SimpleCommand(
     MiraiConsoleDriftBottle,
@@ -47,16 +48,23 @@ object ThrowAway : SimpleCommand(
 
     @Suppress("unused")
     @Handler
-    suspend fun CommandSenderOnMessage<*>.handle(vararg messages: Message) {
-        val chain = messageChainOf(*messages)
-        val owner = if (user != null) Owner(
-            (user as User).id,
-            (user as User).nick,
-            (user as User).avatarUrl,
-        ) else return
-        val source = if (subject is Group) Source(
-            (subject as Group).id,
-            (subject as Group).name,
+    suspend fun CommandSenderOnMessage<*>.handle(vararg messages: Message = arrayOf()) {
+        val commandSender = fromEvent.sender
+        val group = fromEvent.subject
+        val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
+        else {
+                group.sendMessage("请输入你想放入漂流瓶的内容")
+                fromEvent.nextMessage(30_000)
+        }
+
+        val owner = Owner(
+            commandSender.id,
+            commandSender.nick,
+            commandSender.avatarUrl
+        )
+        val source = if (group is Group) Source(
+            group.id,
+            group.name
         ) else null
         val bottle = Item(Item.Type.BOTTLE, owner, source, chain.serializeToJsonString())
         Sea.contents.add(bottle)
