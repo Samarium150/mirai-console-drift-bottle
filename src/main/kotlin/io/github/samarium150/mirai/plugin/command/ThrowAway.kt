@@ -23,7 +23,6 @@ import io.github.samarium150.mirai.plugin.data.Item
 import io.github.samarium150.mirai.plugin.data.Owner
 import io.github.samarium150.mirai.plugin.data.Sea
 import io.github.samarium150.mirai.plugin.data.Source
-import kotlinx.coroutines.TimeoutCancellationException
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
@@ -55,12 +54,8 @@ object ThrowAway : SimpleCommand(
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
         else {
             sendMessage(ReplyConfig.waitForNextMessage)
-            try {
-                fromEvent.nextMessage(30_000)
-            } catch (e: TimeoutCancellationException) {
-                sendMessage(ReplyConfig.timeoutMessage)
-                return
-            }
+            kotlin.runCatching { fromEvent.nextMessage(30_000) }
+                .onFailure { sendMessage(ReplyConfig.timeoutMessage) }.getOrNull() ?: return
         }
         val owner = Owner(
             sender.id,
