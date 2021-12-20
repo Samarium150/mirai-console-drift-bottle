@@ -1,3 +1,12 @@
+<a name="1.1.0"></a>
+
+## 1.1.0 (2021/12/20)
+
+## Features
+
+* enhance the throw-away command with empty
+  message ([603db0d6](https://github.com/Samarium150/mirai-console-simple-echo/commits/603db0d6))
+
 <a name="1.0.2"></a>
 
 # 1.0.2 (2021/12/13)
@@ -21,5 +30,4 @@
 ## Features
 
 * initialize repo ([06f23435](https://github.com/Samarium150/mirai-console-simple-echo/commits/06f23435))
-* implement basic
-  functionalities ([f1dfc6d2](https://github.com/Samarium150/mirai-console-simple-echo/commits/f1dfc6d2))
+* implement basic functionalities ([f1dfc6d2](https://github.com/Samarium150/mirai-console-simple-echo/commits/f1dfc6d2))
