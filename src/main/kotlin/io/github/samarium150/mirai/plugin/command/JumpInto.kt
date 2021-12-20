@@ -43,17 +43,19 @@ object JumpInto : SimpleCommand(
     @Suppress("unused")
     @Handler
     suspend fun CommandSender.handle() {
-        val owner = if (user != null) Owner(
-            (user as User).id,
-            (user as User).nick,
-            (user as User).avatarUrl,
+        val sender = user
+        val group = subject
+        val owner = if (sender is User) Owner(
+            sender.id,
+            sender.nick,
+            sender.avatarUrl
         ) else null
         if (owner == null)
             sendMessage(ReplyConfig.jumpInto.replace("%num", Sea.contents.size.toString()))
         else {
-            val source = if (subject is Group) Source(
-                (subject as Group).id,
-                (subject as Group).name,
+            val source = if (group is Group) Source(
+                group.id,
+                group.name
             ) else null
             val body = Item(Item.Type.BODY, owner, source)
             Sea.contents.add(body)
