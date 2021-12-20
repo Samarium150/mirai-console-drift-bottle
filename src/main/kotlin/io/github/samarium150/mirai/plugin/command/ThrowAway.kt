@@ -54,7 +54,12 @@ object ThrowAway : SimpleCommand(
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
         else {
             sendMessage(ReplyConfig.waitForNextMessage)
-            fromEvent.nextMessage(30_000)
+            try {
+                fromEvent.nextMessage(30_000)
+            } catch (e: TimeoutCancellationException) {
+                group.sendMessage(ReplyConfig.timeout)
+                return
+            }
         }
         val owner = Owner(
             sender.id,
