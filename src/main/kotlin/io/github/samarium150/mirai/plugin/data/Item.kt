@@ -92,8 +92,8 @@ class Item {
                                     "%time",
                                     Date(timestamp)
                                         .toInstant()
-                                        .atZone(ZoneId.systemDefault())
-                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                                        .atZone(ZoneId.of("Asia/Shanghai"))
+                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss O"))
                                 )
                         )
                     )
