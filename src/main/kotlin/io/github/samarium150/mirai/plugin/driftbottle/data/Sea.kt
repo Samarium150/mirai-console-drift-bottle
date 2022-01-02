@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.config
+package io.github.samarium150.mirai.plugin.driftbottle.data
 
-import net.mamoe.mirai.console.data.AutoSavePluginConfig
+import net.mamoe.mirai.console.data.AutoSavePluginData
+import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 
-object ContentCensorConfig : AutoSavePluginConfig("ContentCensor") {
+object Sea : AutoSavePluginData("Sea") {
 
-    val API_KEY: String by value()
-
-    val SECRET_KEY: String by value()
+    @ValueDescription("海里的所有物品")
+    val contents: MutableList<Item> by value()
 
 }

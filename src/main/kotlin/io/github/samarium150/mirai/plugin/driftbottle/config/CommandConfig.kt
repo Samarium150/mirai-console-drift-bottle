@@ -14,21 +14,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.data
+package io.github.samarium150.mirai.plugin.driftbottle.config
 
-import net.mamoe.mirai.console.data.AutoSavePluginData
-import net.mamoe.mirai.console.data.ValueName
+import net.mamoe.mirai.console.data.AutoSavePluginConfig
+import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 
+object CommandConfig : AutoSavePluginConfig("Command") {
 
-object ContentCensorToken : AutoSavePluginData("ContentCensorToken") {
+    @ValueDescription("jump-into命令的别名")
+    val jumpInto: Array<String> by value(arrayOf("跳海", "跳进海里"))
 
-    var timestamp: Long by value(0L)
+    @ValueDescription("pickup命令的别名")
+    val pickup: Array<String> by value(arrayOf("捡漂流瓶"))
 
-    @ValueName("expires_in")
-    var expiresIn: Long by value(0L)
-
-    @ValueName("access_token")
-    var accessToken: String by value("")
+    @ValueDescription("throw-away命令的别名")
+    val throwAway: Array<String> by value(arrayOf("丢漂流瓶"))
 
 }
