@@ -8,12 +8,16 @@ plugins {
 }
 
 group = "io.github.samarium150"
-version = "1.1.0"
+version = "1.2.1"
 
 repositories {
     mavenLocal()
     maven("https://maven.aliyun.com/repository/public")
     mavenCentral()
+}
+
+dependencies {
+    implementation("io.ktor:ktor-client-serialization:1.5.4")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {

@@ -14,18 +14,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.config
+package io.github.samarium150.baidu.aip.response
 
-import net.mamoe.mirai.console.data.AutoSavePluginConfig
-import net.mamoe.mirai.console.data.ValueDescription
-import net.mamoe.mirai.console.data.value
+import kotlinx.serialization.Serializable
 
-object GeneralConfig : AutoSavePluginConfig("General") {
-
-    @ValueDescription("捡起漂流瓶不减少物品总数")
-    val incremental by value(true)
-
-    @ValueDescription("是否启用内容审核")
-    val enableContentCensor by value(false)
-
-}
+@Serializable
+data class TextCensorResponseData(
+    override val error_code: Int? = null,
+    override val error_msg: String? = null,
+    override val type: Int? = null,
+    override val subType: Int? = null,
+    override val msg: String? = null
+) : ResponseData

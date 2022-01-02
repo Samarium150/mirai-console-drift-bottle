@@ -20,30 +20,39 @@ import io.github.samarium150.mirai.plugin.command.JumpInto
 import io.github.samarium150.mirai.plugin.command.Pickup
 import io.github.samarium150.mirai.plugin.command.ThrowAway
 import io.github.samarium150.mirai.plugin.config.CommandConfig
+import io.github.samarium150.mirai.plugin.config.ContentCensorConfig
 import io.github.samarium150.mirai.plugin.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.data.ContentCensorToken
 import io.github.samarium150.mirai.plugin.data.Sea
+import io.ktor.client.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
-import net.mamoe.mirai.utils.info
 
 object MiraiConsoleDriftBottle : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-drift-bottle",
         name = "Drift Bottle",
-        version = "1.1.0",
+        version = "1.2.1",
     ) {
         author("Samarium150")
         info("简单的漂流瓶插件")
     }
 ) {
+
+    lateinit var client: HttpClient
+
     override fun onEnable() {
         // 重载数据
         GeneralConfig.reload()
         ReplyConfig.reload()
         CommandConfig.reload()
+        ContentCensorConfig.reload()
+        ContentCensorToken.reload()
         Sea.reload()
 
         // 注册命令
@@ -51,7 +60,21 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
         Pickup.register()
         ThrowAway.register()
 
-        logger.info { "Plugin loaded" }
+        // 初始化 HTTP 客户端
+        if (GeneralConfig.enableContentCensor)
+            client = HttpClient {
+                install(JsonFeature) {
+                    serializer = KotlinxSerializer(
+                        kotlinx.serialization.json.Json {
+                            prettyPrint = true
+                            isLenient = true
+                            ignoreUnknownKeys = true
+                        }
+                    )
+                }
+            }
+
+        logger.info("Plugin loaded")
     }
 
     override fun onDisable() {
@@ -60,6 +83,10 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
         Pickup.unregister()
         ThrowAway.unregister()
 
-        logger.info { "Plugin unloaded" }
+        // 关闭 HTTP 客户端
+        if (GeneralConfig.enableContentCensor)
+            client.close()
+
+        logger.info("Plugin unloaded")
     }
 }

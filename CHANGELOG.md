@@ -1,11 +1,28 @@
+<a name="1.2.1"></a>
+
+# 1.2.1 (2021/12/23)
+
+## Bug Fixes
+
+* let date-time format include
+  time-zone ([5be2c4d5](https://github.com/Samarium150/mirai-console-simple-echo/commits/5be2c4d5))
+  <a name="1.2.0"></a>
+
+## 1.2.0 (2021/12/20)
+
+## Features
+
+* add an option for enabling baidu AI content
+  censor ([07baa572](https://github.com/Samarium150/mirai-console-simple-echo/commits/07baa572),
+  closes [#2](https://github.com/Samarium150/mirai-console-simple-echo/issues/issues/2))
+
 <a name="1.1.0"></a>
 
 ## 1.1.0 (2021/12/20)
 
 ## Features
 
-* enhance the throw-away command with empty
-  message ([603db0d6](https://github.com/Samarium150/mirai-console-simple-echo/commits/603db0d6))
+* enhance the throw-away command with empty message ([603db0d6](https://github.com/Samarium150/mirai-console-simple-echo/commits/603db0d6))
 
 <a name="1.0.2"></a>
 

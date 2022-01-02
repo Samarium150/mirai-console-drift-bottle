@@ -17,15 +17,12 @@
 package io.github.samarium150.mirai.plugin.config
 
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
-import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 
-object GeneralConfig : AutoSavePluginConfig("General") {
+object ContentCensorConfig : AutoSavePluginConfig("ContentCensor") {
 
-    @ValueDescription("捡起漂流瓶不减少物品总数")
-    val incremental by value(true)
+    val API_KEY: String by value()
 
-    @ValueDescription("是否启用内容审核")
-    val enableContentCensor by value(false)
+    val SECRET_KEY: String by value()
 
 }
