@@ -46,6 +46,6 @@ object Pickup : SimpleCommand(
         }
         val index = Random().nextInt(Sea.contents.size)
         val item = if (GeneralConfig.incremental) Sea.contents[index] else Sea.contents.removeAt(index)
-        sendMessage(item.toMessageChain(subject))
+        sendMessage(item.toMessageChain(fromEvent.subject))
     }
 }

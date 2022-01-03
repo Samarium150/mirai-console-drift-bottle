@@ -16,21 +16,18 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle.data
 
+import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
-import java.io.ByteArrayOutputStream
 import java.net.URL
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
-import javax.imageio.ImageIO
 
 @Serializable
 class Item {
@@ -59,7 +56,7 @@ class Item {
         this.content = content
     }
 
-    suspend fun toMessageChain(contact: Contact?): MessageChain {
+    suspend fun toMessageChain(contact: Contact): MessageChain {
         return buildMessageChain {
             when (type) {
                 Type.BOTTLE -> {
@@ -68,22 +65,22 @@ class Item {
                         from = "${source}的" + from
                     else
                         from += "悄悄留下"
+                    var chainJson = content ?: throw NoSuchElementException("未知错误")
+                    while (chainJson.contains("%image")) {
+                        val left = chainJson.indexOf("%image") + 6
+                        val right = chainJson.indexOf("%", left)
+                        val fileName = chainJson.substring(left, right)
+                        println(fileName)
+                        val image = MiraiConsoleDriftBottle.dataFolder.resolve(fileName).uploadAsImage(contact)
+                        chainJson = chainJson.replace("%image$fileName%", image.imageId)
+                    }
                     add(ReplyConfig.pickupBottle.replace("%source", from))
-                    add(MessageChain.deserializeFromJsonString(content!!))
+                    add(MessageChain.deserializeFromJsonString(chainJson))
                 }
                 Type.BODY -> {
-                    val img = if (contact != null) {
-                        val avatar = withContext(Dispatchers.IO) {
-                            ImageIO.read(URL(owner.avatarUrl))
-                        }
-                        val inputStream = withContext(Dispatchers.IO) {
-                            val byteArrayOutputStream = ByteArrayOutputStream()
-                            ImageIO.write(avatar, "jpg", byteArrayOutputStream)
-                            byteArrayOutputStream.toByteArray().inputStream()
-                        }
-                        inputStream.uploadAsImage(contact)
-                    } else null
-                    if (img != null) add(img)
+                    val avatarStream = URL(owner.avatarUrl).openStream()
+                    val img = avatarStream.use { it.uploadAsImage(contact) }
+                    add(img)
                     add(
                         PlainText(
                             ReplyConfig.pickupBody

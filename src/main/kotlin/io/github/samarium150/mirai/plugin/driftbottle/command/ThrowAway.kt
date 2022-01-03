@@ -33,12 +33,14 @@ import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
-import net.mamoe.mirai.message.data.Message
+import net.mamoe.mirai.message.data.*
+import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.message.data.MessageChain.Companion.serializeToJsonString
-import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.message.data.buildMessageChain
-import net.mamoe.mirai.message.data.messageChainOf
 import net.mamoe.mirai.message.nextMessage
+import java.io.BufferedOutputStream
+import java.io.FileOutputStream
+import java.net.URL
+import java.util.*
 
 
 object ThrowAway : SimpleCommand(
@@ -88,7 +90,21 @@ object ThrowAway : SimpleCommand(
             subject.id,
             subject.name
         ) else null
-        val bottle = Item(Item.Type.BOTTLE, owner, source, chain.serializeToJsonString())
+        // 考虑到使用的是Json
+        var chainJson = chain.serializeToJsonString()
+        chain.forEach {
+            if (it is Image) {
+                val uuid = UUID.randomUUID()
+                val fileOutputStream = FileOutputStream(MiraiConsoleDriftBottle.dataFolder.resolve("$uuid.image"))
+               URL(it.queryUrl()).openStream().use { input ->
+                   BufferedOutputStream(fileOutputStream).use { out ->
+                       input.copyTo(out)
+                   }
+               }
+                chainJson = chainJson.replace(it.imageId, "%image$uuid.image%") // 貌似mirai是通过文件头读取而不是通过后缀判断
+            }
+        }
+        val bottle = Item(Item.Type.BOTTLE, owner, source, chainJson)
         Sea.contents.add(bottle)
         val parts = ReplyConfig.throwAway.split("%content")
         sendMessage(buildMessageChain {
