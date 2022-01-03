@@ -6,7 +6,7 @@
 [![GitHub all releases](https://img.shields.io/github/downloads/Samarium150/mirai-console-drift-bottle/total)](https://github.com/Samarium150/mirai-console-drift-bottle/releases/latest)
 [![visitors](https://visitor-badge.glitch.me/badge?page_id=Samarium150.mirai%2Dconsole%2Ddrift%2Dbottle)]()
 
-简单的漂流瓶插件，基本照抄了`Dice!`项目的漂流瓶功能
+简单的漂流瓶插件，基本照抄了`Dice!`项目的漂流瓶功能(原作者：[Lily Black @ Mirai Forum](https://mirai.mamoe.net/user/lily-black))
 
 可以在私聊或者群聊中丢出包含任意消息的漂流瓶, 其他人通过捡起漂流瓶即可看到相应的消息
 
