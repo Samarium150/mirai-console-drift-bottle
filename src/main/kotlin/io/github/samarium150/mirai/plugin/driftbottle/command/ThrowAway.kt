@@ -63,8 +63,8 @@ object ThrowAway : SimpleCommand(
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
         else {
             sendMessage(ReplyConfig.waitForNextMessage)
+            if (!inActive.add(sender)) return
             runCatching {
-                inActive.add(sender)
                 fromEvent.nextMessage(30_000)
             }.onFailure {
                 sendMessage(ReplyConfig.timeoutMessage)
