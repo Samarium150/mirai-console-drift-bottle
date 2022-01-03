@@ -17,6 +17,7 @@
 package io.github.samarium150.mirai.plugin.driftbottle.command
 
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
+import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle.logger
 import io.github.samarium150.mirai.plugin.driftbottle.config.CommandConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
@@ -25,11 +26,13 @@ import io.github.samarium150.mirai.plugin.driftbottle.data.Owner
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
 import io.github.samarium150.mirai.plugin.driftbottle.data.Source
 import io.github.samarium150.mirai.plugin.driftbottle.util.ContentCensor
+import kotlinx.coroutines.delay
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Group
+import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.Message
 import net.mamoe.mirai.message.data.MessageChain.Companion.serializeToJsonString
 import net.mamoe.mirai.message.data.PlainText
@@ -44,8 +47,7 @@ object ThrowAway : SimpleCommand(
     secondaryNames = CommandConfig.throwAway,
     description = "丢出漂流瓶"
 ) {
-
-    private val logger = MiraiConsoleDriftBottle.logger
+    private val inActive = mutableSetOf<User>()
 
     @ConsoleExperimentalApi
     @ExperimentalCommandDescriptors
@@ -60,9 +62,13 @@ object ThrowAway : SimpleCommand(
         else {
             sendMessage(ReplyConfig.waitForNextMessage)
             runCatching {
+                inActive.add(sender)
                 fromEvent.nextMessage(30_000)
             }.onFailure {
                 sendMessage(ReplyConfig.timeoutMessage)
+            }.also {
+                delay(100)
+                inActive.remove(sender)
             }.getOrNull() ?: return
         }
         if (GeneralConfig.enableContentCensor) runCatching {
