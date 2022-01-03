@@ -14,13 +14,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.data
+package io.github.samarium150.mirai.plugin.driftbottle.data
 
-import kotlinx.serialization.Serializable
+import net.mamoe.mirai.console.data.AutoSavePluginData
+import net.mamoe.mirai.console.data.ValueName
+import net.mamoe.mirai.console.data.value
 
-@Serializable
-data class Owner(val id: Long, val name: String, val avatarUrl: String) {
-    override fun toString(): String {
-        return "$name($id)"
-    }
+
+object ContentCensorToken : AutoSavePluginData("ContentCensorToken") {
+
+    var timestamp: Long by value(0L)
+
+    @ValueName("expires_in")
+    var expiresIn: Long by value(0L)
+
+    @ValueName("access_token")
+    var accessToken: String by value("")
+
 }

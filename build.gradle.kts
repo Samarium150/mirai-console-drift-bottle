@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     val kotlinVersion = "1.5.10"
     kotlin("jvm") version kotlinVersion
@@ -20,14 +22,17 @@ dependencies {
     implementation("io.ktor:ktor-client-serialization:1.5.4")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
-    kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
-    kotlinOptions.jvmTarget = "11"
-}
+tasks {
 
-changelog {
-    appName = project.name
-    versionNum = "$version"
-    repoUrl = "https://github.com/Samarium150/mirai-console-simple-echo"
-    trackerUrl = "https://github.com/Samarium150/mirai-console-simple-echo/issues"
+    withType<KotlinCompile>().all {
+        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+        kotlinOptions.jvmTarget = "11"
+    }
+
+    changelog {
+        appName = project.name
+        versionNum = "$version"
+        repoUrl = "https://github.com/Samarium150/mirai-console-simple-echo"
+        trackerUrl = "https://github.com/Samarium150/mirai-console-simple-echo/issues"
+    }
 }

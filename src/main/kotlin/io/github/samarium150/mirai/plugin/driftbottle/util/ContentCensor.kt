@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.util
+package io.github.samarium150.mirai.plugin.driftbottle.util
 
 import io.github.samarium150.baidu.aip.data.Credential
 import io.github.samarium150.baidu.aip.data.URLS
 import io.github.samarium150.baidu.aip.response.ImageCensorResponseBody
 import io.github.samarium150.baidu.aip.response.ResponseBody
 import io.github.samarium150.baidu.aip.response.TextCensorResponseBody
-import io.github.samarium150.mirai.plugin.MiraiConsoleDriftBottle
-import io.github.samarium150.mirai.plugin.config.ContentCensorConfig
-import io.github.samarium150.mirai.plugin.data.ContentCensorToken
+import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
+import io.github.samarium150.mirai.plugin.driftbottle.config.ContentCensorConfig
+import io.github.samarium150.mirai.plugin.driftbottle.data.ContentCensorToken
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*

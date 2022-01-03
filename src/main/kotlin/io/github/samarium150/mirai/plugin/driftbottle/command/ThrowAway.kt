@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.command
+package io.github.samarium150.mirai.plugin.driftbottle.command
 
-import io.github.samarium150.mirai.plugin.MiraiConsoleDriftBottle
-import io.github.samarium150.mirai.plugin.config.CommandConfig
-import io.github.samarium150.mirai.plugin.config.GeneralConfig
-import io.github.samarium150.mirai.plugin.config.ReplyConfig
-import io.github.samarium150.mirai.plugin.data.Item
-import io.github.samarium150.mirai.plugin.data.Owner
-import io.github.samarium150.mirai.plugin.data.Sea
-import io.github.samarium150.mirai.plugin.data.Source
-import io.github.samarium150.mirai.plugin.util.ContentCensor
+import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
+import io.github.samarium150.mirai.plugin.driftbottle.config.CommandConfig
+import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
+import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.driftbottle.data.Item
+import io.github.samarium150.mirai.plugin.driftbottle.data.Owner
+import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
+import io.github.samarium150.mirai.plugin.driftbottle.data.Source
+import io.github.samarium150.mirai.plugin.driftbottle.util.ContentCensor
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors

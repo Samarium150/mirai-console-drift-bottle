@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin
+package io.github.samarium150.mirai.plugin.driftbottle
 
-import io.github.samarium150.mirai.plugin.command.JumpInto
-import io.github.samarium150.mirai.plugin.command.Pickup
-import io.github.samarium150.mirai.plugin.command.ThrowAway
-import io.github.samarium150.mirai.plugin.config.CommandConfig
-import io.github.samarium150.mirai.plugin.config.ContentCensorConfig
-import io.github.samarium150.mirai.plugin.config.GeneralConfig
-import io.github.samarium150.mirai.plugin.config.ReplyConfig
-import io.github.samarium150.mirai.plugin.data.ContentCensorToken
-import io.github.samarium150.mirai.plugin.data.Sea
+import io.github.samarium150.mirai.plugin.driftbottle.command.JumpInto
+import io.github.samarium150.mirai.plugin.driftbottle.command.Pickup
+import io.github.samarium150.mirai.plugin.driftbottle.command.ThrowAway
+import io.github.samarium150.mirai.plugin.driftbottle.config.CommandConfig
+import io.github.samarium150.mirai.plugin.driftbottle.config.ContentCensorConfig
+import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
+import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.driftbottle.data.ContentCensorToken
+import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*

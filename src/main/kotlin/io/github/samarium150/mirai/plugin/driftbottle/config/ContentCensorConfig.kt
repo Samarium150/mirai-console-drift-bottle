@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.data
+package io.github.samarium150.mirai.plugin.driftbottle.config
 
-import kotlinx.serialization.Serializable
+import net.mamoe.mirai.console.data.AutoSavePluginConfig
+import net.mamoe.mirai.console.data.value
 
-@Serializable
-data class Source(val id: Long, val name: String) {
-    override fun toString(): String {
-        return "$name($id)"
-    }
+object ContentCensorConfig : AutoSavePluginConfig("ContentCensor") {
+
+    val API_KEY: String by value()
+
+    val SECRET_KEY: String by value()
+
 }

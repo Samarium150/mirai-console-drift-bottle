@@ -14,21 +14,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.config
+package io.github.samarium150.mirai.plugin.driftbottle.data
 
-import net.mamoe.mirai.console.data.AutoSavePluginConfig
-import net.mamoe.mirai.console.data.ValueDescription
-import net.mamoe.mirai.console.data.value
+import kotlinx.serialization.Serializable
 
-object CommandConfig : AutoSavePluginConfig("Command") {
-
-    @ValueDescription("jump-into命令的别名")
-    val jumpInto: Array<String> by value(arrayOf("跳海", "跳进海里"))
-
-    @ValueDescription("pickup命令的别名")
-    val pickup: Array<String> by value(arrayOf("捡漂流瓶"))
-
-    @ValueDescription("throw-away命令的别名")
-    val throwAway: Array<String> by value(arrayOf("丢漂流瓶"))
-
+@Serializable
+data class Owner(val id: Long, val name: String, val avatarUrl: String) {
+    override fun toString(): String {
+        return "$name($id)"
+    }
 }
