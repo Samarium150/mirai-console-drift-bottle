@@ -28,4 +28,6 @@ object GeneralConfig : AutoSavePluginConfig("General") {
     @ValueDescription("是否启用内容审核")
     val enableContentCensor by value(false)
 
+    @ValueDescription("漂流瓶图片是否保存到本地")
+    val saveImageToLocal by value(true)
 }

@@ -17,6 +17,7 @@
 package io.github.samarium150.mirai.plugin.driftbottle.data
 
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
+import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.contact.Contact
@@ -70,8 +71,9 @@ class Item {
                         val left = chainJson.indexOf("%image") + 6
                         val right = chainJson.indexOf("%", left)
                         val fileName = chainJson.substring(left, right)
-                        println(fileName)
-                        val image = MiraiConsoleDriftBottle.dataFolder.resolve(fileName).uploadAsImage(contact)
+                        val file = MiraiConsoleDriftBottle.dataFolder.resolve(fileName)
+                        val image = file.uploadAsImage(contact)
+                        if (GeneralConfig.incremental) file.deleteOnExit()
                         chainJson = chainJson.replace("%image$fileName%", image.imageId)
                     }
                     add(ReplyConfig.pickupBottle.replace("%source", from))
