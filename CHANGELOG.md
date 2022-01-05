@@ -1,3 +1,15 @@
+<a name="1.3.0"></a>
+
+## 1.3.0 (2022/01/05)
+
+## Features
+
+* cache images (#6) ([523d6779](https://github.com/Samarium150/mirai-console-simple-echo/commits/523d6779))
+
+## Refactor
+
+* rename package
+
 <a name="1.2.1"></a>
 
 # 1.2.1 (2021/12/23)
@@ -12,8 +24,7 @@
 
 ## Features
 
-* add an option for enabling baidu AI content
-  censor ([07baa572](https://github.com/Samarium150/mirai-console-simple-echo/commits/07baa572),
+* add an option for enabling baidu AI content censor ([07baa572](https://github.com/Samarium150/mirai-console-simple-echo/commits/07baa572),
   closes [#2](https://github.com/Samarium150/mirai-console-simple-echo/issues/issues/2))
 
 <a name="1.1.0"></a>
