@@ -33,7 +33,6 @@ import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.*
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.message.data.MessageChain.Companion.serializeToJsonString
@@ -48,7 +47,7 @@ object ThrowAway : SimpleCommand(
     secondaryNames = CommandConfig.throwAway,
     description = "丢出漂流瓶"
 ) {
-    private val inActive = mutableSetOf<User>()
+    private val active = mutableSetOf<Long>()
 
     @ConsoleExperimentalApi
     @ExperimentalCommandDescriptors
@@ -61,15 +60,15 @@ object ThrowAway : SimpleCommand(
         val subject = fromEvent.subject
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
         else {
+            if (!active.add(sender.id)) return
             sendMessage(ReplyConfig.waitForNextMessage)
-            if (!inActive.add(sender)) return
             runCatching {
                 fromEvent.nextMessage(30_000)
             }.onFailure {
                 sendMessage(ReplyConfig.timeoutMessage)
             }.also {
                 delay(100)
-                inActive.remove(sender)
+                active.remove(sender.id)
             }.getOrNull() ?: return
         }
         if (GeneralConfig.enableContentCensor) runCatching {
