@@ -76,8 +76,9 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
                     )
                 }
             }
+
         if (!cacheFolder.exists())
-            logger.info(cacheFolder.mkdir().toString())
+            cacheFolder.mkdir()
         CacheType.values().forEach {
             val cache = cacheFolderByType(it)
             if (!cache.exists())
