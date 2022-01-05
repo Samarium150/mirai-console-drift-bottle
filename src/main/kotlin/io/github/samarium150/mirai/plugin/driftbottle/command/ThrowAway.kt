@@ -17,7 +17,6 @@
 package io.github.samarium150.mirai.plugin.driftbottle.command
 
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
-import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle.logger
 import io.github.samarium150.mirai.plugin.driftbottle.config.CommandConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
@@ -25,7 +24,9 @@ import io.github.samarium150.mirai.plugin.driftbottle.data.Item
 import io.github.samarium150.mirai.plugin.driftbottle.data.Owner
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
 import io.github.samarium150.mirai.plugin.driftbottle.data.Source
+import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
 import io.github.samarium150.mirai.plugin.driftbottle.util.ContentCensor
+import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolderByType
 import kotlinx.coroutines.delay
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
@@ -40,8 +41,6 @@ import net.mamoe.mirai.message.nextMessage
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
 import java.net.URL
-import java.util.*
-
 
 object ThrowAway : SimpleCommand(
     MiraiConsoleDriftBottle,
@@ -79,7 +78,7 @@ object ThrowAway : SimpleCommand(
                 return
             }
         }.onFailure {
-            logger.error(it)
+            MiraiConsoleDriftBottle.logger.error(it)
         }
         val owner = Owner(
             sender.id,
@@ -90,19 +89,17 @@ object ThrowAway : SimpleCommand(
             subject.id,
             subject.name
         ) else null
-        // 考虑到使用的是Json
-        var chainJson = chain.serializeToJsonString()
-        if (GeneralConfig.saveImageToLocal)
+        val chainJson = chain.serializeToJsonString()
+        if (GeneralConfig.cacheImage)
             chain.forEach {
                 if (it is Image) {
-                    val uuid = UUID.randomUUID()
-                    val fileOutputStream = FileOutputStream(MiraiConsoleDriftBottle.dataFolder.resolve("$uuid.image"))
+                    val id = it.imageId
+                    val fileOutputStream = FileOutputStream(cacheFolderByType(CacheType.IMAGE).resolve(id))
                     URL(it.queryUrl()).openStream().use { input ->
                         BufferedOutputStream(fileOutputStream).use { out ->
                             input.copyTo(out)
                         }
                     }
-                    chainJson = chainJson.replace(it.imageId, "%image$uuid.image%") // 貌似mirai是通过文件头读取而不是通过后缀判断
                 }
             }
         val bottle = Item(Item.Type.BOTTLE, owner, source, chainJson)

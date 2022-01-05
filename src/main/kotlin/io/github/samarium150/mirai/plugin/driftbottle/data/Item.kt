@@ -19,8 +19,11 @@ package io.github.samarium150.mirai.plugin.driftbottle.data
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
 import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
+import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolderByType
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.contact.Contact
+import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.buildMessageChain
@@ -67,15 +70,19 @@ class Item {
                     else
                         from += "悄悄留下"
                     var chainJson = content ?: throw NoSuchElementException("未知错误")
-                    while (chainJson.contains("%image")) {
-                        val left = chainJson.indexOf("%image") + 6
-                        val right = chainJson.indexOf("%", left)
-                        val fileName = chainJson.substring(left, right)
-                        val file = MiraiConsoleDriftBottle.dataFolder.resolve(fileName)
-                        val image = file.uploadAsImage(contact)
-                        if (GeneralConfig.incremental) file.deleteOnExit()
-                        chainJson = chainJson.replace("%image$fileName%", image.imageId)
-                    }
+                    if (GeneralConfig.cacheImage)
+                        Image.IMAGE_ID_REGEX.findAll(chainJson).forEach {
+                            val imageId = it.value.trimEnd('}', '"')
+                            val file = cacheFolderByType(CacheType.IMAGE).resolve(imageId)
+                            runCatching {
+                                val image = file.uploadAsImage(contact)
+                                if (GeneralConfig.incremental) file.deleteOnExit()
+                                if (imageId != image.imageId)
+                                    chainJson = chainJson.replace(imageId, image.imageId)
+                            }.onFailure { e ->
+                                MiraiConsoleDriftBottle.logger.error(e)
+                            }
+                        }
                     add(ReplyConfig.pickupBottle.replace("%source", from))
                     add(MessageChain.deserializeFromJsonString(chainJson))
                 }
