@@ -16,21 +16,22 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle.data
 
+import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
+import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
+import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolderByType
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.contact.Contact
+import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
-import java.io.ByteArrayOutputStream
 import java.net.URL
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
-import javax.imageio.ImageIO
 
 @Serializable
 class Item {
@@ -59,7 +60,7 @@ class Item {
         this.content = content
     }
 
-    suspend fun toMessageChain(contact: Contact?): MessageChain {
+    suspend fun toMessageChain(contact: Contact): MessageChain {
         return buildMessageChain {
             when (type) {
                 Type.BOTTLE -> {
@@ -68,22 +69,27 @@ class Item {
                         from = "${source}的" + from
                     else
                         from += "悄悄留下"
+                    var chainJson = content ?: throw NoSuchElementException("未知错误")
+                    if (GeneralConfig.cacheImage)
+                        Image.IMAGE_ID_REGEX.findAll(chainJson).forEach {
+                            val imageId = it.value.trimEnd('}', '"')
+                            val file = cacheFolderByType(CacheType.IMAGE).resolve(imageId)
+                            runCatching {
+                                val image = file.uploadAsImage(contact)
+                                if (GeneralConfig.incremental) file.deleteOnExit()
+                                if (imageId != image.imageId)
+                                    chainJson = chainJson.replace(imageId, image.imageId)
+                            }.onFailure { e ->
+                                MiraiConsoleDriftBottle.logger.error(e)
+                            }
+                        }
                     add(ReplyConfig.pickupBottle.replace("%source", from))
-                    add(MessageChain.deserializeFromJsonString(content!!))
+                    add(MessageChain.deserializeFromJsonString(chainJson))
                 }
                 Type.BODY -> {
-                    val img = if (contact != null) {
-                        val avatar = withContext(Dispatchers.IO) {
-                            ImageIO.read(URL(owner.avatarUrl))
-                        }
-                        val inputStream = withContext(Dispatchers.IO) {
-                            val byteArrayOutputStream = ByteArrayOutputStream()
-                            ImageIO.write(avatar, "jpg", byteArrayOutputStream)
-                            byteArrayOutputStream.toByteArray().inputStream()
-                        }
-                        inputStream.uploadAsImage(contact)
-                    } else null
-                    if (img != null) add(img)
+                    val avatarStream = URL(owner.avatarUrl).openStream()
+                    val img = avatarStream.use { it.uploadAsImage(contact) }
+                    add(img)
                     add(
                         PlainText(
                             ReplyConfig.pickupBody

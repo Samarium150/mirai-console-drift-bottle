@@ -24,19 +24,22 @@ import io.github.samarium150.mirai.plugin.driftbottle.data.Item
 import io.github.samarium150.mirai.plugin.driftbottle.data.Owner
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
 import io.github.samarium150.mirai.plugin.driftbottle.data.Source
+import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
 import io.github.samarium150.mirai.plugin.driftbottle.util.ContentCensor
+import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolderByType
+import kotlinx.coroutines.delay
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.message.data.Message
+import net.mamoe.mirai.message.data.*
+import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.message.data.MessageChain.Companion.serializeToJsonString
-import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.message.data.buildMessageChain
-import net.mamoe.mirai.message.data.messageChainOf
 import net.mamoe.mirai.message.nextMessage
-
+import java.io.BufferedOutputStream
+import java.io.FileOutputStream
+import java.net.URL
 
 object ThrowAway : SimpleCommand(
     MiraiConsoleDriftBottle,
@@ -44,8 +47,7 @@ object ThrowAway : SimpleCommand(
     secondaryNames = CommandConfig.throwAway,
     description = "丢出漂流瓶"
 ) {
-
-    private val logger = MiraiConsoleDriftBottle.logger
+    private val active = mutableSetOf<Long>()
 
     @ConsoleExperimentalApi
     @ExperimentalCommandDescriptors
@@ -58,11 +60,15 @@ object ThrowAway : SimpleCommand(
         val subject = fromEvent.subject
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
         else {
+            if (!active.add(sender.id)) return
             sendMessage(ReplyConfig.waitForNextMessage)
             runCatching {
                 fromEvent.nextMessage(30_000)
             }.onFailure {
                 sendMessage(ReplyConfig.timeoutMessage)
+            }.also {
+                delay(100)
+                active.remove(sender.id)
             }.getOrNull() ?: return
         }
         if (GeneralConfig.enableContentCensor) runCatching {
@@ -71,7 +77,7 @@ object ThrowAway : SimpleCommand(
                 return
             }
         }.onFailure {
-            logger.error(it)
+            MiraiConsoleDriftBottle.logger.error(it)
         }
         val owner = Owner(
             sender.id,
@@ -82,7 +88,20 @@ object ThrowAway : SimpleCommand(
             subject.id,
             subject.name
         ) else null
-        val bottle = Item(Item.Type.BOTTLE, owner, source, chain.serializeToJsonString())
+        val chainJson = chain.serializeToJsonString()
+        if (GeneralConfig.cacheImage)
+            chain.forEach {
+                if (it is Image) {
+                    val id = it.imageId
+                    val fileOutputStream = FileOutputStream(cacheFolderByType(CacheType.IMAGE).resolve(id))
+                    URL(it.queryUrl()).openStream().use { input ->
+                        BufferedOutputStream(fileOutputStream).use { out ->
+                            input.copyTo(out)
+                        }
+                    }
+                }
+            }
+        val bottle = Item(Item.Type.BOTTLE, owner, source, chainJson)
         Sea.contents.add(bottle)
         val parts = ReplyConfig.throwAway.split("%content")
         sendMessage(buildMessageChain {
