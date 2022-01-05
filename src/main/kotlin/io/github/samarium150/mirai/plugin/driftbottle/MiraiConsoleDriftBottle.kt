@@ -25,9 +25,6 @@ import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.driftbottle.data.ContentCensorToken
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
-import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
-import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolder
-import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolderByType
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
@@ -76,14 +73,6 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
                     )
                 }
             }
-
-        if (!cacheFolder.exists())
-            cacheFolder.mkdir()
-        CacheType.values().forEach {
-            val cache = cacheFolderByType(it)
-            if (!cache.exists())
-                cache.mkdir()
-        }
 
         logger.info("Plugin loaded")
     }
