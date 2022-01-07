@@ -44,7 +44,7 @@ class Item {
         BODY
     }
 
-    private val type: Type
+    val type: Type
     private val owner: Owner
     private val source: Source?
     private var content: String? = null
