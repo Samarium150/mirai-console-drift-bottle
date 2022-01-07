@@ -1,3 +1,12 @@
+<a name="1.3.1"></a>
+
+# 1.3.1 (2022/01/07)
+
+## Bug Fixes
+
+* try to save image when cache missing (
+  #7) ([9e446c56](https://github.com/Samarium150/mirai-console-simple-echo/commits/9e446c56))
+
 <a name="1.3.0"></a>
 
 ## 1.3.0 (2022/01/05)
@@ -16,8 +25,7 @@
 
 ## Bug Fixes
 
-* let date-time format include
-  time-zone ([5be2c4d5](https://github.com/Samarium150/mirai-console-simple-echo/commits/5be2c4d5))
+* let date-time format include time-zone ([5be2c4d5](https://github.com/Samarium150/mirai-console-simple-echo/commits/5be2c4d5))
   <a name="1.2.0"></a>
 
 ## 1.2.0 (2021/12/20)
