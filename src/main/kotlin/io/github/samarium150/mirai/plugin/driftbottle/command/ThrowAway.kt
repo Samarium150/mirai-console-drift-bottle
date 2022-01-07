@@ -27,7 +27,7 @@ import io.github.samarium150.mirai.plugin.driftbottle.data.Source
 import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
 import io.github.samarium150.mirai.plugin.driftbottle.util.ContentCensor
 import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolderByType
-import kotlinx.coroutines.delay
+import io.github.samarium150.mirai.plugin.driftbottle.util.saveFrom
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
@@ -37,9 +37,6 @@ import net.mamoe.mirai.message.data.*
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.message.data.MessageChain.Companion.serializeToJsonString
 import net.mamoe.mirai.message.nextMessage
-import java.io.BufferedOutputStream
-import java.io.FileOutputStream
-import java.net.URL
 
 object ThrowAway : SimpleCommand(
     MiraiConsoleDriftBottle,
@@ -67,7 +64,6 @@ object ThrowAway : SimpleCommand(
             }.onFailure {
                 sendMessage(ReplyConfig.timeoutMessage)
             }.also {
-                delay(100)
                 active.remove(sender.id)
             }.getOrNull() ?: return
         }
@@ -91,15 +87,8 @@ object ThrowAway : SimpleCommand(
         val chainJson = chain.serializeToJsonString()
         if (GeneralConfig.cacheImage)
             chain.forEach {
-                if (it is Image) {
-                    val id = it.imageId
-                    val fileOutputStream = FileOutputStream(cacheFolderByType(CacheType.IMAGE).resolve(id))
-                    URL(it.queryUrl()).openStream().use { input ->
-                        BufferedOutputStream(fileOutputStream).use { out ->
-                            input.copyTo(out)
-                        }
-                    }
-                }
+                if (it is Image)
+                    cacheFolderByType(CacheType.IMAGE).resolve(it.imageId).saveFrom(it.queryUrl())
             }
         val bottle = Item(Item.Type.BOTTLE, owner, source, chainJson)
         Sea.contents.add(bottle)
