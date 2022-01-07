@@ -21,13 +21,16 @@ import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
 import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolderByType
+import io.github.samarium150.mirai.plugin.driftbottle.util.saveFrom
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.data.Image
+import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
+import java.io.FileNotFoundException
 import java.net.URL
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -41,7 +44,7 @@ class Item {
         BODY
     }
 
-    private val type: Type
+    val type: Type
     private val owner: Owner
     private val source: Source?
     private var content: String? = null
@@ -76,11 +79,16 @@ class Item {
                             val file = cacheFolderByType(CacheType.IMAGE).resolve(imageId)
                             runCatching {
                                 val image = file.uploadAsImage(contact)
-                                if (GeneralConfig.incremental) file.deleteOnExit()
                                 if (imageId != image.imageId)
                                     chainJson = chainJson.replace(imageId, image.imageId)
                             }.onFailure { e ->
-                                MiraiConsoleDriftBottle.logger.error(e)
+                                if (e is FileNotFoundException) runCatching {
+                                    val image = Image.fromId(imageId)
+                                    file.saveFrom(image.queryUrl())
+                                }.onFailure {
+                                    MiraiConsoleDriftBottle.logger.error(e)
+                                } else
+                                    MiraiConsoleDriftBottle.logger.error(e)
                             }
                         }
                     add(ReplyConfig.pickupBottle.replace("%source", from))

@@ -20,6 +20,7 @@ import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
 import io.github.samarium150.mirai.plugin.driftbottle.config.CommandConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.driftbottle.data.Item
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
@@ -45,7 +46,11 @@ object Pickup : SimpleCommand(
             return
         }
         val index = Random().nextInt(Sea.contents.size)
-        val item = if (GeneralConfig.incremental) Sea.contents[index] else Sea.contents.removeAt(index)
+        val item = Sea.contents[index]
+        if ((item.type == Item.Type.BOTTLE && !GeneralConfig.incrementalBottle)
+            || (item.type == Item.Type.BODY && !GeneralConfig.incrementalBody)
+        )
+            Sea.contents.removeAt(index)
         sendMessage(item.toMessageChain(fromEvent.subject))
     }
 }
