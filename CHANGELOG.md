@@ -1,3 +1,13 @@
+<a name="1.4.0"></a>
+
+## 1.4.0 (2022/01/07)
+
+## Features
+
+* separate settings of incremental
+  items ([aadebd66](https://github.com/Samarium150/mirai-console-simple-echo/commits/aadebd66),
+  closes [#8](https://github.com/Samarium150/mirai-console-simple-echo/issues/issues/8))
+
 <a name="1.3.1"></a>
 
 # 1.3.1 (2022/01/07)
@@ -5,7 +15,7 @@
 ## Bug Fixes
 
 * try to save image when cache missing (
-  #7) ([9e446c56](https://github.com/Samarium150/mirai-console-simple-echo/commits/9e446c56))
+  # 7) ([9e446c56](https://github.com/Samarium150/mirai-console-simple-echo/commits/9e446c56))
 
 <a name="1.3.0"></a>
 
