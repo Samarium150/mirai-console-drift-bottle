@@ -21,10 +21,11 @@ import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
 import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolderByType
-import io.github.samarium150.mirai.plugin.driftbottle.util.saveImage
+import io.github.samarium150.mirai.plugin.driftbottle.util.saveFrom
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.data.Image
+import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.buildMessageChain
@@ -83,7 +84,7 @@ class Item {
                             }.onFailure { e ->
                                 if (e is FileNotFoundException) runCatching {
                                     val image = Image.fromId(imageId)
-                                    saveImage(image, file)
+                                    file.saveFrom(image.queryUrl())
                                 }.onFailure {
                                     MiraiConsoleDriftBottle.logger.error(e)
                                 } else

@@ -27,13 +27,14 @@ import io.github.samarium150.mirai.plugin.driftbottle.data.Source
 import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
 import io.github.samarium150.mirai.plugin.driftbottle.util.ContentCensor
 import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolderByType
-import io.github.samarium150.mirai.plugin.driftbottle.util.saveImage
+import io.github.samarium150.mirai.plugin.driftbottle.util.saveFrom
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.message.data.*
+import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.message.data.MessageChain.Companion.serializeToJsonString
 import net.mamoe.mirai.message.nextMessage
 
@@ -87,7 +88,7 @@ object ThrowAway : SimpleCommand(
         if (GeneralConfig.cacheImage)
             chain.forEach {
                 if (it is Image)
-                    saveImage(it, cacheFolderByType(CacheType.IMAGE).resolve(it.imageId))
+                    cacheFolderByType(CacheType.IMAGE).resolve(it.imageId).saveFrom(it.queryUrl())
             }
         val bottle = Item(Item.Type.BOTTLE, owner, source, chainJson)
         Sea.contents.add(bottle)
