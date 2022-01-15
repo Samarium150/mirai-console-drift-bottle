@@ -24,10 +24,11 @@ import io.github.samarium150.mirai.plugin.driftbottle.data.Item
 import io.github.samarium150.mirai.plugin.driftbottle.data.Owner
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
 import io.github.samarium150.mirai.plugin.driftbottle.data.Source
+import io.github.samarium150.mirai.plugin.driftbottle.util.*
 import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
-import io.github.samarium150.mirai.plugin.driftbottle.util.ContentCensor
 import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolderByType
 import io.github.samarium150.mirai.plugin.driftbottle.util.saveFrom
+import kotlinx.coroutines.delay
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
@@ -44,7 +45,6 @@ object ThrowAway : SimpleCommand(
     secondaryNames = CommandConfig.throwAway,
     description = "丢出漂流瓶"
 ) {
-    private val active = mutableSetOf<Long>()
 
     @ConsoleExperimentalApi
     @ExperimentalCommandDescriptors
@@ -55,16 +55,14 @@ object ThrowAway : SimpleCommand(
     suspend fun CommandSenderOnMessage<*>.handle(vararg messages: Message = arrayOf()) {
         val sender = fromEvent.sender
         val subject = fromEvent.subject
+        if (!active.add(sender.id)) return
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
         else {
-            if (!active.add(sender.id)) return
             sendMessage(ReplyConfig.waitForNextMessage)
             runCatching {
                 fromEvent.nextMessage(30_000)
             }.onFailure {
                 sendMessage(ReplyConfig.timeoutMessage)
-            }.also {
-                active.remove(sender.id)
             }.getOrNull() ?: return
         }
         if (GeneralConfig.enableContentCensor) runCatching {
@@ -97,6 +95,9 @@ object ThrowAway : SimpleCommand(
             +PlainText(parts[0])
             +chain
             +PlainText(parts[1])
-        })
+        }).also {
+            delay(GeneralConfig.perUse * 1000L)
+            active.remove(sender.id)
+        }
     }
 }
