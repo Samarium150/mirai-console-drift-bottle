@@ -33,3 +33,5 @@ internal suspend fun File.saveFrom(url: String) = withContext(Dispatchers.IO) {
         }
     }
 }
+
+internal val active = mutableSetOf<Long>()
