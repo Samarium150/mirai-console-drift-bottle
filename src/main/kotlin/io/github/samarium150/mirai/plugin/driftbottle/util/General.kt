@@ -1,7 +1,9 @@
 package io.github.samarium150.mirai.plugin.driftbottle.util
 
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
+import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig.randomDelayInterval
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.io.BufferedOutputStream
 import java.io.File
@@ -34,4 +36,8 @@ internal suspend fun File.saveFrom(url: String) = withContext(Dispatchers.IO) {
     }
 }
 
-internal val active = mutableSetOf<Long>()
+internal val randomDelay: suspend () -> Unit = {
+    val (low, high) = randomDelayInterval
+    if (low <= high)
+        delay((low..high).random())
+}

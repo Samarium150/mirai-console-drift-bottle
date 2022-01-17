@@ -24,7 +24,9 @@ import io.github.samarium150.mirai.plugin.driftbottle.data.Item
 import io.github.samarium150.mirai.plugin.driftbottle.data.Owner
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
 import io.github.samarium150.mirai.plugin.driftbottle.data.Source
-import io.github.samarium150.mirai.plugin.driftbottle.util.active
+import io.github.samarium150.mirai.plugin.driftbottle.util.lock
+import io.github.samarium150.mirai.plugin.driftbottle.util.randomDelay
+import io.github.samarium150.mirai.plugin.driftbottle.util.unlock
 import kotlinx.coroutines.delay
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
@@ -46,10 +48,10 @@ object JumpInto : SimpleCommand(
     @Handler
     suspend fun CommandSender.handle() {
         val sender = user
-        if (sender == null)
+        if (sender == null) randomDelay().also {
             sendMessage(ReplyConfig.jumpInto.replace("%num", Sea.contents.size.toString()))
-        else {
-            active.add(sender.id)
+        } else {
+            if (!lock(sender.id)) return
             val subject = subject
             val owner = Owner(
                 sender.id,
@@ -62,9 +64,11 @@ object JumpInto : SimpleCommand(
             ) else null
             val body = Item(Item.Type.BODY, owner, source)
             Sea.contents.add(body)
-            sendMessage(ReplyConfig.jumpInto.replace("%num", Sea.contents.size.toString())).also {
-                delay(GeneralConfig.perUse * 1000L)
-                active.remove(sender.id)
+            randomDelay().also {
+                sendMessage(ReplyConfig.jumpInto.replace("%num", Sea.contents.size.toString())).also {
+                    delay(GeneralConfig.perUse * 1000L)
+                    unlock(sender.id)
+                }
             }
         }
     }
