@@ -22,6 +22,7 @@ import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.driftbottle.data.Item
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
+import io.github.samarium150.mirai.plugin.driftbottle.util.disableAt
 import io.github.samarium150.mirai.plugin.driftbottle.util.lock
 import io.github.samarium150.mirai.plugin.driftbottle.util.randomDelay
 import io.github.samarium150.mirai.plugin.driftbottle.util.unlock
@@ -46,6 +47,7 @@ object Pickup : SimpleCommand(
     @Handler
     suspend fun CommandSenderOnMessage<*>.handle() {
         val sender = fromEvent.sender
+        val subject = fromEvent.subject
         if (!lock(sender.id)) return
         if (Sea.contents.size == 0) {
             randomDelay().also {
@@ -61,7 +63,7 @@ object Pickup : SimpleCommand(
         )
             Sea.contents.removeAt(index)
         randomDelay().also {
-            sendMessage(item.toMessageChain(fromEvent.subject)).also {
+            sendMessage(disableAt(item.toMessageChain(subject), subject)).also {
                 delay(GeneralConfig.perUse * 1000L)
                 unlock(sender.id)
             }

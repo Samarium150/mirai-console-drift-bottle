@@ -39,4 +39,7 @@ object GeneralConfig : AutoSavePluginConfig("General") {
 
     @ValueDescription("随机延迟回复的时间区间 (单位: 毫秒)")
     val randomDelayInterval: Pair<Long, Long> by value(Pair(1000L, 1500L))
+
+    @ValueDescription("禁用漂流瓶内容中的@")
+    val disableDirectAt by value(false)
 }

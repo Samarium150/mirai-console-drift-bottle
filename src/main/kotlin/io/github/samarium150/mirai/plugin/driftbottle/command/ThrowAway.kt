@@ -104,7 +104,7 @@ object ThrowAway : SimpleCommand(
             randomDelay().also {
                 sendMessage(buildMessageChain {
                     +PlainText(parts[0])
-                    +chain
+                    +disableAt(chain, subject)
                     +PlainText(parts[1])
                 }).also {
                     delay(GeneralConfig.perUse * 1000L)
