@@ -61,3 +61,5 @@ internal fun disableAt(messageChain: MessageChain, subject: Contact): MessageCha
         chain.toMessageChain()
     } else messageChain
 }
+
+internal val indexOfBottle = mutableMapOf<Long, Int>()
