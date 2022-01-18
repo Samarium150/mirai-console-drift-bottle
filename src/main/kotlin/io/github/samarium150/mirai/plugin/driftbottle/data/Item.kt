@@ -16,7 +16,6 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle.data
 
-import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
 import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
@@ -30,7 +29,6 @@ import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
-import java.io.FileNotFoundException
 import java.net.URL
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -63,13 +61,13 @@ class Item {
         this.content = content
     }
 
-    suspend fun toMessageChain(contact: Contact): MessageChain {
+    suspend fun toMessageChain(contact: Contact, index: Int): MessageChain {
         return buildMessageChain {
             when (type) {
                 Type.BOTTLE -> {
-                    var from = "$owner"
+                    var from = owner.name
                     if (source != null)
-                        from = "${source}的" + from
+                        from = "${source}的$from\n"
                     else
                         from += "悄悄留下"
                     var chainJson = content ?: throw NoSuchElementException("未知错误")
@@ -81,17 +79,12 @@ class Item {
                                 val image = file.uploadAsImage(contact)
                                 if (imageId != image.imageId)
                                     chainJson = chainJson.replace(imageId, image.imageId)
-                            }.onFailure { e ->
-                                if (e is FileNotFoundException) runCatching {
-                                    val image = Image.fromId(imageId)
-                                    file.saveFrom(image.queryUrl())
-                                }.onFailure {
-                                    MiraiConsoleDriftBottle.logger.error(e)
-                                } else
-                                    MiraiConsoleDriftBottle.logger.error(e)
+                            }.onFailure {
+                                val image = Image(imageId)
+                                file.saveFrom(image.queryUrl())
                             }
                         }
-                    add(ReplyConfig.pickupBottle.replace("%source", from))
+                    add(ReplyConfig.pickupBottle.replace("%source", from).replace("%index", index.toString()))
                     add(MessageChain.deserializeFromJsonString(chainJson))
                 }
                 Type.BODY -> {

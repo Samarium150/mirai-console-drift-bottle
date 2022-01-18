@@ -26,7 +26,7 @@ object ReplyConfig : AutoSavePluginConfig("Reply") {
     val noItem: String by value("海里暂时没有物品哦~")
 
     @ValueDescription("捡起漂流瓶的回复")
-    val pickupBottle: String by value("你在海边捡到了一个来自【%source】的漂流瓶，打开瓶子，里面有一张纸条，写着：\n")
+    val pickupBottle: String by value("序号: %index\n你在海边捡到了一个来自【%source】的漂流瓶，打开瓶子，里面有一张纸条，写着：\n")
 
     @ValueDescription("捡起尸体的回复")
     val pickupBody: String by value("海面飘来了【%who】的浮尸……\n他于【%time】")
