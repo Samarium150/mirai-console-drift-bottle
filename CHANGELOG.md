@@ -1,3 +1,15 @@
+<a name="1.5.0"></a>
+
+## 1.5.0 (2022/01/18)
+
+## Features
+
+* optimizing (#9) ([04c996d7](https://github.com/Samarium150/mirai-console-simple-echo/commits/04c996d7))
+    - add commands cooldown
+    - add random reply delay
+    - add an option for disabling At message
+    - simplify time format
+
 <a name="1.4.0"></a>
 
 ## 1.4.0 (2022/01/07)
