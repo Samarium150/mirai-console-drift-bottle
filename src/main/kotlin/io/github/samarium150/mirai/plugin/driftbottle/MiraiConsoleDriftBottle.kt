@@ -16,6 +16,7 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle
 
+import io.github.samarium150.mirai.plugin.driftbottle.command.DeleteBottle
 import io.github.samarium150.mirai.plugin.driftbottle.command.JumpInto
 import io.github.samarium150.mirai.plugin.driftbottle.command.Pickup
 import io.github.samarium150.mirai.plugin.driftbottle.command.ThrowAway
@@ -47,19 +48,8 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
     lateinit var client: HttpClient
 
     override fun onEnable() {
-        // 重载数据
-        GeneralConfig.reload()
-        ReplyConfig.reload()
-        CommandConfig.reload()
-        ContentCensorConfig.reload()
-        ContentCensorToken.reload()
-        Sea.reload()
-
-        // 注册命令
-        JumpInto.register()
-        Pickup.register()
-        ThrowAway.register()
-
+        // 初始化插件
+        init()
         // 初始化 HTTP 客户端
         if (GeneralConfig.enableContentCensor)
             client = HttpClient {
@@ -88,5 +78,21 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
             client.close()
 
         logger.info("Plugin unloaded")
+    }
+
+    private fun init() {
+        // 重载数据
+        GeneralConfig.reload()
+        ReplyConfig.reload()
+        CommandConfig.reload()
+        ContentCensorConfig.reload()
+        ContentCensorToken.reload()
+        Sea.reload()
+
+        // 注册命令
+        JumpInto.register()
+        Pickup.register()
+        ThrowAway.register()
+        DeleteBottle.register()
     }
 }
