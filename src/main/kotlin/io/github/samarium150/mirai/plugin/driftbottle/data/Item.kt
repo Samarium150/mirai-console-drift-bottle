@@ -107,7 +107,7 @@ class Item {
                                     Date(timestamp)
                                         .toInstant()
                                         .atZone(ZoneId.of("Asia/Shanghai"))
-                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss O"))
+                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                                 )
                         )
                     )

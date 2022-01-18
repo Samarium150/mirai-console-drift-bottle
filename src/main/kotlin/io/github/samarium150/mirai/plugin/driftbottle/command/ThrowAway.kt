@@ -24,10 +24,8 @@ import io.github.samarium150.mirai.plugin.driftbottle.data.Item
 import io.github.samarium150.mirai.plugin.driftbottle.data.Owner
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
 import io.github.samarium150.mirai.plugin.driftbottle.data.Source
-import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
-import io.github.samarium150.mirai.plugin.driftbottle.util.ContentCensor
-import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolderByType
-import io.github.samarium150.mirai.plugin.driftbottle.util.saveFrom
+import io.github.samarium150.mirai.plugin.driftbottle.util.*
+import kotlinx.coroutines.delay
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
@@ -44,7 +42,6 @@ object ThrowAway : SimpleCommand(
     secondaryNames = CommandConfig.throwAway,
     description = "丢出漂流瓶"
 ) {
-    private val active = mutableSetOf<Long>()
 
     @ConsoleExperimentalApi
     @ExperimentalCommandDescriptors
@@ -55,17 +52,20 @@ object ThrowAway : SimpleCommand(
     suspend fun CommandSenderOnMessage<*>.handle(vararg messages: Message = arrayOf()) {
         val sender = fromEvent.sender
         val subject = fromEvent.subject
+        if (!lock(sender.id)) return
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
         else {
-            if (!active.add(sender.id)) return
-            sendMessage(ReplyConfig.waitForNextMessage)
+            randomDelay().also {
+                sendMessage(ReplyConfig.waitForNextMessage)
+            }
             runCatching {
                 fromEvent.nextMessage(30_000)
             }.onFailure {
                 sendMessage(ReplyConfig.timeoutMessage)
-            }.also {
-                active.remove(sender.id)
-            }.getOrNull() ?: return
+            }.getOrNull() ?: run {
+                unlock(sender.id)
+                return@handle
+            }
         }
         if (GeneralConfig.enableContentCensor) runCatching {
             if (!ContentCensor.determine(chain)) {
@@ -93,10 +93,19 @@ object ThrowAway : SimpleCommand(
         val bottle = Item(Item.Type.BOTTLE, owner, source, chainJson)
         Sea.contents.add(bottle)
         val parts = ReplyConfig.throwAway.split("%content")
-        sendMessage(buildMessageChain {
-            +PlainText(parts[0])
-            +chain
-            +PlainText(parts[1])
-        })
+        runCatching {
+            randomDelay().also {
+                if (parts.size == 1) sendMessage(parts[0])
+                else
+                    sendMessage(buildMessageChain {
+                        +PlainText(parts[0])
+                        +disableAt(chain, subject)
+                        +PlainText(parts[1])
+                    })
+            }
+        }.also {
+            delay(GeneralConfig.perUse * 1000L)
+            unlock(sender.id)
+        }
     }
 }

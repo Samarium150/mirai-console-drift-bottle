@@ -33,4 +33,10 @@ object GeneralConfig : AutoSavePluginConfig("General") {
 
     @ValueDescription("是否缓存漂流瓶图片到本地")
     val cacheImage by value(true)
+
+    @ValueDescription("漂流瓶功能连续使用间隔 (单位: 秒)")
+    val perUse by value(10)
+
+    @ValueDescription("随机延迟回复的时间区间 (单位: 毫秒)")
+    val randomDelayInterval: Pair<Long, Long> by value(Pair(1000L, 1500L))
 }
