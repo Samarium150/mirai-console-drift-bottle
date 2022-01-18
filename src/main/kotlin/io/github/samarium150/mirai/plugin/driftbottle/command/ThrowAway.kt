@@ -103,9 +103,8 @@ object ThrowAway : SimpleCommand(
                         +PlainText(parts[1])
                     })
             }
-        }.also {
-            delay(GeneralConfig.perUse * 1000L)
-            unlock(sender.id)
         }
+        delay(GeneralConfig.perUse * 1000L)
+        unlock(sender.id)
     }
 }
