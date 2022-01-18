@@ -95,15 +95,13 @@ object ThrowAway : SimpleCommand(
         val parts = ReplyConfig.throwAway.split("%content")
         runCatching {
             randomDelay().also {
-                if (parts.size == 1) {
-                    sendMessage(parts[0])
-                } else {
+                if (parts.size == 1) sendMessage(parts[0])
+                else
                     sendMessage(buildMessageChain {
                         +PlainText(parts[0])
                         +disableAt(chain, subject)
                         +PlainText(parts[1])
                     })
-                }
             }
         }.also {
             delay(GeneralConfig.perUse * 1000L)

@@ -1,7 +1,7 @@
 package io.github.samarium150.mirai.plugin.driftbottle.util
 
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
-import io.github.samarium150.mirai.plugin.driftbottle.config.AdvancedOption
+import io.github.samarium150.mirai.plugin.driftbottle.config.AdvancedConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -50,7 +50,7 @@ internal val randomDelay: suspend () -> Unit = {
 }
 
 internal fun disableAt(messageChain: MessageChain, subject: Contact): MessageChain {
-    return if (AdvancedOption.disableDirectAt) {
+    return if (AdvancedConfig.disableDirectAt) {
         val group = if (subject is Group) subject else null
         val chain = messageChain.toMutableList()
         for (i in 0 until chain.size) {
@@ -59,5 +59,5 @@ internal fun disableAt(messageChain: MessageChain, subject: Contact): MessageCha
                 chain[i] = PlainText(message.getDisplay(group).replace("@", "At(").plus(")"))
         }
         chain.toMessageChain()
-    }else messageChain
+    } else messageChain
 }
