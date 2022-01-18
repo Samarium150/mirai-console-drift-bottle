@@ -26,8 +26,8 @@
 
 ## Bug Fixes
 
-* try to save image when cache missing (
-  # 7) ([9e446c56](https://github.com/Samarium150/mirai-console-simple-echo/commits/9e446c56))
+* try to save image when cache missing (#7)
+  ([9e446c56](https://github.com/Samarium150/mirai-console-simple-echo/commits/9e446c56))
 
 <a name="1.3.0"></a>
 
