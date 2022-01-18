@@ -22,10 +22,7 @@ import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.driftbottle.data.Item
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
-import io.github.samarium150.mirai.plugin.driftbottle.util.disableAt
-import io.github.samarium150.mirai.plugin.driftbottle.util.lock
-import io.github.samarium150.mirai.plugin.driftbottle.util.randomDelay
-import io.github.samarium150.mirai.plugin.driftbottle.util.unlock
+import io.github.samarium150.mirai.plugin.driftbottle.util.*
 import kotlinx.coroutines.delay
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
@@ -45,7 +42,7 @@ object Pickup : SimpleCommand(
 
     @Suppress("unused")
     @Handler
-    suspend fun CommandSenderOnMessage<*>.handle() {
+    suspend fun CommandSenderOnMessage<*>.handle(index: Int = Random().nextInt(Sea.contents.size)) {
         val sender = fromEvent.sender
         val subject = fromEvent.subject
         if (!lock(sender.id)) return
@@ -56,17 +53,15 @@ object Pickup : SimpleCommand(
             }
             return
         }
-        val index = Random().nextInt(Sea.contents.size)
         val item = Sea.contents[index]
         if ((item.type == Item.Type.BOTTLE && !GeneralConfig.incrementalBottle)
             || (item.type == Item.Type.BODY && !GeneralConfig.incrementalBody)
-        )
-            Sea.contents.removeAt(index)
+        ) Sea.contents.removeAt(index)
+        else indexOfBottle[subject.id] = index
         randomDelay().also {
-            sendMessage(disableAt(item.toMessageChain(subject), subject)).also {
-                delay(GeneralConfig.perUse * 1000L)
-                unlock(sender.id)
-            }
+            sendMessage(disableAt(item.toMessageChain(subject, index), subject))
+            delay(GeneralConfig.perUse * 1000L)
+            unlock(sender.id)
         }
     }
 }
