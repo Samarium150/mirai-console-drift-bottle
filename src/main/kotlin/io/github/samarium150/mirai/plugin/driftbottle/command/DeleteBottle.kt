@@ -21,7 +21,9 @@ object DeleteBottle : CompositeCommand(
             sendMessage("数字超出范围！")
             return
         }
-        Sea.contents.removeAt(index)
-        sendMessage("已删除漂流瓶$index")
+        val result = runCatching { Sea.contents.removeAt(index) }.onFailure { e ->
+            if (e !is IndexOutOfBoundsException) MiraiConsoleDriftBottle.logger.error(e)
+        }
+        sendMessage(if (result.isSuccess) "已删除漂流瓶$index" else "删除漂流瓶$index 失败")
     }
 }
