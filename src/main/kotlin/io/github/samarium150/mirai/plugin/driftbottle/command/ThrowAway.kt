@@ -93,24 +93,21 @@ object ThrowAway : SimpleCommand(
         val bottle = Item(Item.Type.BOTTLE, owner, source, chainJson)
         Sea.contents.add(bottle)
         val parts = ReplyConfig.throwAway.split("%content")
-        if (parts.size == 1) {
+        runCatching {
             randomDelay().also {
-                sendMessage(parts[0]).also {
-                    delay(GeneralConfig.perUse * 1000L)
-                    unlock(sender.id)
+                if (parts.size == 1) {
+                    sendMessage(parts[0])
+                } else {
+                    sendMessage(buildMessageChain {
+                        +PlainText(parts[0])
+                        +disableAt(chain, subject)
+                        +PlainText(parts[1])
+                    })
                 }
             }
-        } else {
-            randomDelay().also {
-                sendMessage(buildMessageChain {
-                    +PlainText(parts[0])
-                    +disableAt(chain, subject)
-                    +PlainText(parts[1])
-                }).also {
-                    delay(GeneralConfig.perUse * 1000L)
-                    unlock(sender.id)
-                }
-            }
+        }.also {
+            delay(GeneralConfig.perUse * 1000L)
+            unlock(sender.id)
         }
     }
 }
