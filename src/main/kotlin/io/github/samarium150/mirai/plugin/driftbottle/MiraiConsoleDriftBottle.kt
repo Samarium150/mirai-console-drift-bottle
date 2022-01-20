@@ -16,7 +16,7 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle
 
-import io.github.samarium150.mirai.plugin.driftbottle.command.DeleteBottle
+import io.github.samarium150.mirai.plugin.driftbottle.command.BottleOperation
 import io.github.samarium150.mirai.plugin.driftbottle.command.JumpInto
 import io.github.samarium150.mirai.plugin.driftbottle.command.Pickup
 import io.github.samarium150.mirai.plugin.driftbottle.command.ThrowAway
@@ -93,6 +93,6 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
         JumpInto.register()
         Pickup.register()
         ThrowAway.register()
-        DeleteBottle.register()
+        BottleOperation.register()
     }
 }

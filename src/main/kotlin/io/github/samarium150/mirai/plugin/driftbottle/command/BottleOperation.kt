@@ -11,23 +11,23 @@ import java.time.ZoneOffset
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-object DeleteBottle : CompositeCommand(
+object BottleOperation : CompositeCommand(
     MiraiConsoleDriftBottle, "bottle", "b",
     description = "漂流瓶操作指令"
 ) {
     @SubCommand("del", "rm")
     suspend fun CommandSender.remove(index: Int? = subject?.let { indexOfBottle[it.id] }) {
-       if (isNotOutOfRange(index)){
-           val result = runCatching { Sea.contents.removeAt(index) }.onFailure { e ->
-               if (e !is IndexOutOfBoundsException) MiraiConsoleDriftBottle.logger.error(e)
-           }
-           sendMessage(if (result.isSuccess) "已删除漂流瓶$index" else "删除漂流瓶$index 失败")
-       }
+        if (isNotOutOfRange(index)) {
+            val result = runCatching { Sea.contents.removeAt(index) }.onFailure { e ->
+                if (e !is IndexOutOfBoundsException) MiraiConsoleDriftBottle.logger.error(e)
+            }
+            sendMessage(if (result.isSuccess) "已删除漂流瓶$index" else "删除漂流瓶$index 失败")
+        }
     }
 
     @SubCommand("query", "see")
-    suspend fun CommandSender.query(index: Int? = subject?.let { indexOfBottle[it.id] }){
-        if (isNotOutOfRange(index)){
+    suspend fun CommandSender.query(index: Int? = subject?.let { indexOfBottle[it.id] }) {
+        if (isNotOutOfRange(index)) {
             val result = runCatching {
                 val one = Sea.contents[index]
                 """
@@ -49,7 +49,7 @@ object DeleteBottle : CompositeCommand(
             returns(true) implies (index != null)
         }
         if (index == null) {
-            subject?.sendMessage("删除失败，请尝试输入序号") ?: MiraiConsoleDriftBottle.logger.error { "控制台删除请输入序号" }
+            subject?.sendMessage("请尝试输入序号") ?: MiraiConsoleDriftBottle.logger.error { "控制台使用请输入序号" }
             return false
         }
         if (index < 0 || index > Sea.contents.size) {
