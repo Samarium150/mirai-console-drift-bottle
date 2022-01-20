@@ -43,10 +43,10 @@ class Item {
     }
 
     val type: Type
-    private val owner: Owner
-    private val source: Source?
+    val owner: Owner
+    val source: Source?
     private var content: String? = null
-    private val timestamp = Date().time
+    val timestamp = Date().time
 
     constructor(type: Type, owner: Owner, source: Source?) {
         this.type = type
