@@ -57,7 +57,7 @@ object Pickup : SimpleCommand(
         if ((item.type == Item.Type.BOTTLE && !GeneralConfig.incrementalBottle)
             || (item.type == Item.Type.BODY && !GeneralConfig.incrementalBody)
         ) Sea.contents.removeAt(index)
-        else indexOfBottle[subject.id] = index
+        else indexOfBottle[subject.id]?.push(index) ?: indexOfBottle.put(subject.id, Stack<Int>().put(index))
         randomDelay().also {
             sendMessage(disableAt(item.toMessageChain(subject, index), subject))
             delay(GeneralConfig.perUse * 1000L)

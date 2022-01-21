@@ -16,7 +16,11 @@ object BottleOperation : CompositeCommand(
     description = "漂流瓶操作指令"
 ) {
     @SubCommand("del", "rm")
-    suspend fun CommandSender.remove(index: Int? = subject?.let { indexOfBottle[it.id] }) {
+    suspend fun CommandSender.remove(
+        index: Int? = subject?.let { sub ->
+            indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.pop()
+        }
+    ) {
         if (isNotOutOfRange(index)) {
             val result = runCatching { Sea.contents.removeAt(index) }.onFailure { e ->
                 if (e !is IndexOutOfBoundsException) MiraiConsoleDriftBottle.logger.error(e)
@@ -26,7 +30,11 @@ object BottleOperation : CompositeCommand(
     }
 
     @SubCommand("query", "see")
-    suspend fun CommandSender.query(index: Int? = subject?.let { indexOfBottle[it.id] }) {
+    suspend fun CommandSender.query(
+        index: Int? = subject?.let { sub ->
+            indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.peek()
+        }
+    ) {
         if (isNotOutOfRange(index)) {
             val result = runCatching {
                 val one = Sea.contents[index]

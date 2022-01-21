@@ -16,6 +16,7 @@ import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
+import java.util.*
 
 internal enum class CacheType {
     IMAGE
@@ -62,4 +63,9 @@ internal fun disableAt(messageChain: MessageChain, subject: Contact): MessageCha
     } else messageChain
 }
 
-internal val indexOfBottle = mutableMapOf<Long, Int>()
+internal fun <E> Stack<E>.put(item: E): Stack<E> {
+    addElement(item)
+    return this
+}
+
+internal val indexOfBottle = mutableMapOf<Long, Stack<Int>>()
