@@ -20,12 +20,10 @@ import io.github.samarium150.mirai.plugin.driftbottle.command.BottleOperation
 import io.github.samarium150.mirai.plugin.driftbottle.command.JumpInto
 import io.github.samarium150.mirai.plugin.driftbottle.command.Pickup
 import io.github.samarium150.mirai.plugin.driftbottle.command.ThrowAway
-import io.github.samarium150.mirai.plugin.driftbottle.config.CommandConfig
-import io.github.samarium150.mirai.plugin.driftbottle.config.ContentCensorConfig
-import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
-import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.driftbottle.config.*
 import io.github.samarium150.mirai.plugin.driftbottle.data.ContentCensorToken
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
+import io.github.samarium150.mirai.plugin.driftbottle.util.alsoSave
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
@@ -81,11 +79,16 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
     }
 
     private fun init() {
-        // 重载数据
-        GeneralConfig.reload()
-        ReplyConfig.reload()
-        CommandConfig.reload()
+        // 重载只读配置
+        AdvancedConfig.alsoSave()
+        GeneralConfig.alsoSave()
+        ReplyConfig.alsoSave()
+        CommandConfig.alsoSave()
+
+        // 重载配置
         ContentCensorConfig.reload()
+
+        // 重载数据
         ContentCensorToken.reload()
         Sea.reload()
 

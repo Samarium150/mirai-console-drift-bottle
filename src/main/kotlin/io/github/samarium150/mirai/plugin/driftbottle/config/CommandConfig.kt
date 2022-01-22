@@ -16,11 +16,11 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle.config
 
-import net.mamoe.mirai.console.data.AutoSavePluginConfig
+import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 
-object CommandConfig : AutoSavePluginConfig("Command") {
+object CommandConfig : ReadOnlyPluginConfig("Command") {
 
     @ValueDescription("jump-into命令的别名")
     val jumpInto: Array<String> by value(arrayOf("跳海", "跳进海里"))

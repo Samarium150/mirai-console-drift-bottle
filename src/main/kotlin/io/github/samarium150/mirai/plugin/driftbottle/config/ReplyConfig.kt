@@ -16,11 +16,11 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle.config
 
-import net.mamoe.mirai.console.data.AutoSavePluginConfig
+import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 
-object ReplyConfig : AutoSavePluginConfig("Reply") {
+object ReplyConfig : ReadOnlyPluginConfig("Reply") {
 
     @ValueDescription("海里没有物品时的回复")
     val noItem: String by value("海里暂时没有物品哦~")
