@@ -1,17 +1,17 @@
 package io.github.samarium150.mirai.plugin.driftbottle.util
 
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
+import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle.reload
+import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle.save
 import io.github.samarium150.mirai.plugin.driftbottle.config.AdvancedConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.message.data.At
-import net.mamoe.mirai.message.data.MessageChain
-import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.message.data.toMessageChain
+import net.mamoe.mirai.message.data.*
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -66,6 +66,19 @@ internal fun disableAt(messageChain: MessageChain, subject: Contact): MessageCha
 internal fun <E> Stack<E>.put(item: E): Stack<E> {
     addElement(item)
     return this
+}
+
+internal val forbidMessageKeys by lazy {
+    mutableListOf<MessageKey<SingleMessage>>().apply {
+        AdvancedConfig.cannotSaveMessageTypes.forEach { (type, bool) ->
+            if (!bool) add(type.toMessageKey())
+        }
+    }.toTypedArray()
+}
+
+internal fun ReadOnlyPluginConfig.alsoSave() {
+    reload()
+    save()
 }
 
 internal val indexOfBottle = mutableMapOf<Long, Stack<Int>>()

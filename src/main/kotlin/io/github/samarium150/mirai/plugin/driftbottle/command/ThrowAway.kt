@@ -64,7 +64,13 @@ object ThrowAway : SimpleCommand(
                 sendMessage(ReplyConfig.timeoutMessage)
             }.getOrNull() ?: run {
                 unlock(sender.id)
-                return@handle
+                return
+            }
+        }
+        forbidMessageKeys.forEach {
+            if (chain.contains(it)) {
+                sendMessage("漂流瓶中有不允许出现的消息类型")
+                return
             }
         }
         if (GeneralConfig.enableContentCensor) runCatching {
