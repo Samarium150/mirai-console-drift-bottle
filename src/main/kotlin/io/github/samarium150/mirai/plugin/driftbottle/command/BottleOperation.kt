@@ -16,7 +16,7 @@ object BottleOperation : CompositeCommand(
     @SubCommand("del", "rm")
     suspend fun CommandSender.remove(
         index: Int? = subject?.let { sub ->
-            indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.pop()
+            indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.pop()?.minus(1)
         }
     ) {
         if (isNotOutOfRange(index)) {
@@ -30,7 +30,7 @@ object BottleOperation : CompositeCommand(
     @SubCommand("query", "see")
     suspend fun CommandSender.query(
         index: Int? = subject?.let { sub ->
-            indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.peek()
+            indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.peek()?.minus(1)
         }
     ) {
         if (isNotOutOfRange(index)) {
