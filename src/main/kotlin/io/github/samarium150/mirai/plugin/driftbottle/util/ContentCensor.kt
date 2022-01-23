@@ -72,9 +72,7 @@ object ContentCensor {
             val response: ResponseBody = when (message) {
                 is PlainText -> client.submitForm<TextCensorResponseBody>(
                     url = "${URLS.TEXT_CENSOR.url}?access_token=${ContentCensorToken.accessToken}",
-                    formParameters = Parameters.build {
-                        append("text", message.content)
-                    }
+                    formParameters = parametersOf("text", message.content)
                 )
                 is Image -> {
                     val buffer = withContext(Dispatchers.IO) {
@@ -87,9 +85,7 @@ object ContentCensor {
                     val base64 = Base64.getEncoder().encodeToString(output.toByteArray())
                     client.submitForm<ImageCensorResponseBody>(
                         url = "${URLS.IMAGE_CENSOR.url}?access_token=${ContentCensorToken.accessToken}",
-                        formParameters = Parameters.build {
-                            append("image", base64)
-                        }
+                        formParameters = parametersOf("image", base64)
                     )
                 }
                 else -> continue
