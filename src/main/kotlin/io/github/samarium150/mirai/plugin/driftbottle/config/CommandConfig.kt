@@ -23,12 +23,14 @@ import net.mamoe.mirai.console.data.value
 object CommandConfig : ReadOnlyPluginConfig("Command") {
 
     @ValueDescription("jump-into命令的别名")
-    val jumpInto: Array<String> by value(arrayOf("跳海", "跳进海里"))
+    val jumpInto by value(arrayOf("跳海", "跳进海里"))
 
     @ValueDescription("pickup命令的别名")
-    val pickup: Array<String> by value(arrayOf("捡漂流瓶"))
+    val pickup by value(arrayOf("捡漂流瓶"))
 
     @ValueDescription("throw-away命令的别名")
-    val throwAway: Array<String> by value(arrayOf("丢漂流瓶"))
+    val throwAway by value(arrayOf("丢漂流瓶"))
 
+    @ValueDescription("comment命令的别名")
+    val comment by value(arrayOf("评论"))
 }
