@@ -16,11 +16,9 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle
 
-import io.github.samarium150.mirai.plugin.driftbottle.command.BottleOperation
-import io.github.samarium150.mirai.plugin.driftbottle.command.JumpInto
-import io.github.samarium150.mirai.plugin.driftbottle.command.Pickup
-import io.github.samarium150.mirai.plugin.driftbottle.command.ThrowAway
+import io.github.samarium150.mirai.plugin.driftbottle.command.*
 import io.github.samarium150.mirai.plugin.driftbottle.config.*
+import io.github.samarium150.mirai.plugin.driftbottle.data.CommentData
 import io.github.samarium150.mirai.plugin.driftbottle.data.ContentCensorToken
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
 import io.github.samarium150.mirai.plugin.driftbottle.util.alsoSave
@@ -90,6 +88,7 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
 
         // 重载数据
         ContentCensorToken.reload()
+        CommentData.reload()
         Sea.reload()
 
         // 注册命令
@@ -97,5 +96,6 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
         Pickup.register()
         ThrowAway.register()
         BottleOperation.register()
+        Comment.register()
     }
 }
