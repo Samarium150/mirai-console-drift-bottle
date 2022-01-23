@@ -45,7 +45,10 @@ object Pickup : SimpleCommand(
     suspend fun CommandSenderOnMessage<*>.handle(index: Int = Random().nextInt(Sea.contents.size)) {
         val sender = fromEvent.sender
         val subject = fromEvent.subject
-        if (!lock(sender.id)) return
+        if (!lock(sender.id)) {
+            sendMessage(ReplyConfig.overspeedMessage)
+            return
+        }
         if (Sea.contents.size == 0) {
             randomDelay()
             sendMessage(ReplyConfig.noItem)

@@ -58,4 +58,6 @@ object ReplyConfig : ReadOnlyPluginConfig("Reply") {
     @ValueDescription("漂流瓶内容不合规的回复")
     val invalidMessage: String by value("不要往瓶子里塞奇怪的东西哦~")
 
+    @ValueDescription("漂流瓶使用速度过快的回复")
+    val overspeedMessage: String by value("好快啊，能不能慢一点")
 }

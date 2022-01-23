@@ -52,7 +52,10 @@ object ThrowAway : SimpleCommand(
     suspend fun CommandSenderOnMessage<*>.handle(vararg messages: Message = arrayOf()) {
         val sender = fromEvent.sender
         val subject = fromEvent.subject
-        if (!lock(sender.id)) return
+        if (!lock(sender.id)) {
+            sendMessage(ReplyConfig.overspeedMessage)
+            return
+        }
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
         else {
             randomDelay().also {

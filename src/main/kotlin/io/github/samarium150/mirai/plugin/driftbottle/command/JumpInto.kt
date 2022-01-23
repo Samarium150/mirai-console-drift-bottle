@@ -48,10 +48,14 @@ object JumpInto : SimpleCommand(
     @Handler
     suspend fun CommandSender.handle() {
         val sender = user
-        if (sender == null) randomDelay().also {
+        if (sender == null) {
+            randomDelay()
             sendMessage(ReplyConfig.jumpInto.replace("%num", Sea.contents.size.toString()))
         } else {
-            if (!lock(sender.id)) return
+            if (!lock(sender.id)) {
+                sendMessage(ReplyConfig.overspeedMessage)
+                return
+            }
             val subject = subject
             val owner = Owner(
                 sender.id,
