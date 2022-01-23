@@ -84,8 +84,16 @@ class Item {
                                 file.saveFrom(image.queryUrl())
                             }
                         }
-                    add(ReplyConfig.pickupBottle.replace("%source", from).replace("%index", index.toString()))
+                    var comments = ""
+                    CommentData.comments[index]?.let {
+                        if (it.isNotEmpty()) comments += "\n此漂流瓶的评论为"
+                        it.forEach { each ->
+                            comments += "${each.sender}: ${each.content}"
+                        }
+                    }
+                    add(ReplyConfig.pickupBottle.replace("%source", from).replace("%index", (index + 1).toString()))
                     add(MessageChain.deserializeFromJsonString(chainJson))
+                    add(comments) // 本来想让用户自定义评论位置的，但是...摆了
                 }
                 Type.BODY -> {
                     val avatarStream = URL(owner.avatarUrl).openStream()
