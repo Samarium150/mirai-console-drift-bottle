@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
+import net.mamoe.mirai.message.data.MessageContent
 import net.mamoe.mirai.message.data.MessageKey
-import net.mamoe.mirai.message.data.SingleMessage
 
 object AdvancedConfig : ReadOnlyPluginConfig("Advanced") {
 
@@ -35,7 +35,7 @@ object AdvancedConfig : ReadOnlyPluginConfig("Advanced") {
         FileMessage,
         ;
 
-        fun toMessageKey(): MessageKey<SingleMessage> {
+        fun toMessageKey(): MessageKey<MessageContent> {
             return when (this) {
                 Image -> net.mamoe.mirai.message.data.Image
                 LightApp -> net.mamoe.mirai.message.data.LightApp
