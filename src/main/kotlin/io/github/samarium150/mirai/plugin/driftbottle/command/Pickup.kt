@@ -47,10 +47,9 @@ object Pickup : SimpleCommand(
         val subject = fromEvent.subject
         if (!lock(sender.id)) return
         if (Sea.contents.size == 0) {
-            randomDelay().also {
-                sendMessage(ReplyConfig.noItem)
-                unlock(sender.id)
-            }
+            randomDelay()
+            sendMessage(ReplyConfig.noItem)
+            unlock(sender.id)
             return
         }
         val item = Sea.contents[index]
@@ -58,10 +57,9 @@ object Pickup : SimpleCommand(
             || (item.type == Item.Type.BODY && !GeneralConfig.incrementalBody)
         ) Sea.contents.removeAt(index)
         else indexOfBottle[subject.id]?.push(index) ?: indexOfBottle.put(subject.id, Stack<Int>().put(index))
-        randomDelay().also {
-            sendMessage(disableAt(item.toMessageChain(subject, index), subject))
-            delay(GeneralConfig.perUse * 1000L)
-            unlock(sender.id)
-        }
+        randomDelay()
+        sendMessage(disableAt(item.toMessageChain(subject, index), subject))
+        delay(GeneralConfig.perUse * 1000L)
+        unlock(sender.id)
     }
 }

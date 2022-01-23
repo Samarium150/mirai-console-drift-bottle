@@ -64,12 +64,10 @@ object JumpInto : SimpleCommand(
             ) else null
             val body = Item(Item.Type.BODY, owner, source)
             Sea.contents.add(body)
-            randomDelay().also {
-                sendMessage(ReplyConfig.jumpInto.replace("%num", Sea.contents.size.toString())).also {
-                    delay(GeneralConfig.perUse * 1000L)
-                    unlock(sender.id)
-                }
-            }
+            randomDelay()
+            sendMessage(ReplyConfig.jumpInto.replace("%num", Sea.contents.size.toString()))
+            delay(GeneralConfig.perUse * 1000L)
+            unlock(sender.id)
         }
     }
 }
