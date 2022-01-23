@@ -5,18 +5,23 @@ import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle.re
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle.save
 import io.github.samarium150.mirai.plugin.driftbottle.config.AdvancedConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
+import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.message.data.*
+import net.mamoe.mirai.utils.error
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
 import java.util.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 internal enum class CacheType {
     IMAGE
@@ -79,6 +84,22 @@ internal val forbidMessageKeys by lazy {
 internal fun ReadOnlyPluginConfig.alsoSave() {
     reload()
     save()
+}
+
+@OptIn(ExperimentalContracts::class)
+suspend fun CommandSender.isNotOutOfRange(index: Int?): Boolean {
+    contract {
+        returns(true) implies (index != null)
+    }
+    if (index == null) {
+        subject?.sendMessage("请尝试输入序号") ?: MiraiConsoleDriftBottle.logger.error { "控制台使用请输入序号" }
+        return false
+    }
+    if (index < 0 || index > Sea.contents.size) {
+        sendMessage("数字超出范围！")
+        return false
+    }
+    return true
 }
 
 internal val indexOfBottle = mutableMapOf<Long, Stack<Int>>()

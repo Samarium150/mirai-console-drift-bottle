@@ -3,13 +3,11 @@ package io.github.samarium150.mirai.plugin.driftbottle.command
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
 import io.github.samarium150.mirai.plugin.driftbottle.util.indexOfBottle
+import io.github.samarium150.mirai.plugin.driftbottle.util.isNotOutOfRange
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
-import net.mamoe.mirai.utils.error
 import java.time.Instant
 import java.time.ZoneOffset
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 object BottleOperation : CompositeCommand(
     MiraiConsoleDriftBottle, "bottle", "b",
@@ -49,21 +47,5 @@ object BottleOperation : CompositeCommand(
             }
             sendMessage(result.getOrNull() ?: "无法找到漂流瓶$index")
         }
-    }
-
-    @OptIn(ExperimentalContracts::class)
-    private suspend fun CommandSender.isNotOutOfRange(index: Int?): Boolean {
-        contract {
-            returns(true) implies (index != null)
-        }
-        if (index == null) {
-            subject?.sendMessage("请尝试输入序号") ?: MiraiConsoleDriftBottle.logger.error { "控制台使用请输入序号" }
-            return false
-        }
-        if (index < 0 || index > Sea.contents.size) {
-            sendMessage("数字超出范围！")
-            return false
-        }
-        return true
     }
 }
