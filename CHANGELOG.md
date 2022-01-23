@@ -1,3 +1,15 @@
+<a name="1.5.0"></a>
+
+## 1.5.0 (2022/01/18)
+
+## Features
+
+* optimizing (#9) ([04c996d7](https://github.com/Samarium150/mirai-console-simple-echo/commits/04c996d7))
+    - add commands cooldown
+    - add random reply delay
+    - add an option for disabling At message
+    - simplify time format
+
 <a name="1.4.0"></a>
 
 ## 1.4.0 (2022/01/07)
@@ -14,8 +26,8 @@
 
 ## Bug Fixes
 
-* try to save image when cache missing (
-  # 7) ([9e446c56](https://github.com/Samarium150/mirai-console-simple-echo/commits/9e446c56))
+* try to save image when cache missing (#7)
+  ([9e446c56](https://github.com/Samarium150/mirai-console-simple-echo/commits/9e446c56))
 
 <a name="1.3.0"></a>
 
