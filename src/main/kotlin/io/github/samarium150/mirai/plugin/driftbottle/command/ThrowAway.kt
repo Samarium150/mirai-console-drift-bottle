@@ -58,9 +58,8 @@ object ThrowAway : SimpleCommand(
         }
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
         else {
-            randomDelay().also {
-                sendMessage(ReplyConfig.waitForNextMessage)
-            }
+            randomDelay()
+            sendMessage(ReplyConfig.waitForNextMessage)
             runCatching {
                 fromEvent.nextMessage(30_000)
             }.onFailure {
@@ -103,15 +102,15 @@ object ThrowAway : SimpleCommand(
         Sea.contents.add(bottle)
         val parts = ReplyConfig.throwAway.split("%content")
         runCatching {
-            randomDelay().also {
-                if (parts.size == 1) sendMessage(parts[0])
-                else
-                    sendMessage(buildMessageChain {
-                        +PlainText(parts[0])
-                        +disableAt(chain, subject)
-                        +PlainText(parts[1])
-                    })
-            }
+            randomDelay()
+            if (parts.size == 1) sendMessage(parts[0])
+            else
+                sendMessage(buildMessageChain {
+                    +PlainText(parts[0])
+                    +disableAt(chain, subject)
+                    +PlainText(parts[1])
+                })
+
         }
         delay(GeneralConfig.perUse * 1000L)
         unlock(sender.id)

@@ -21,6 +21,7 @@ import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
 import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolderByType
 import io.github.samarium150.mirai.plugin.driftbottle.util.saveFrom
+import io.github.samarium150.mirai.plugin.driftbottle.util.timestampToString
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.data.Image
@@ -30,8 +31,6 @@ import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import java.net.URL
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Serializable
@@ -103,13 +102,7 @@ class Item {
                         PlainText(
                             ReplyConfig.pickupBody
                                 .replace("%who", owner.name)
-                                .replace(
-                                    "%time",
-                                    Date(timestamp)
-                                        .toInstant()
-                                        .atZone(ZoneId.of("Asia/Shanghai"))
-                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                                )
+                                .replace("%time", timestamp.timestampToString())
                         )
                     )
                     val where = if (source != null)

@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2020-2021 Samarium
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>
+ */
 package io.github.samarium150.mirai.plugin.driftbottle.util
 
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
@@ -19,6 +35,8 @@ import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -87,7 +105,7 @@ internal fun ReadOnlyPluginConfig.alsoSave() {
 }
 
 @OptIn(ExperimentalContracts::class)
-suspend fun CommandSender.isNotOutOfRange(index: Int?): Boolean {
+internal suspend fun CommandSender.isNotOutOfRange(index: Int?): Boolean {
     contract {
         returns(true) implies (index != null)
     }
@@ -103,3 +121,10 @@ suspend fun CommandSender.isNotOutOfRange(index: Int?): Boolean {
 }
 
 internal val indexOfBottle = mutableMapOf<Long, Stack<Int>>()
+
+internal fun Long.timestampToString(): String {
+    return Date(this)
+        .toInstant()
+        .atZone(ZoneId.of("Asia/Shanghai"))
+        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+}

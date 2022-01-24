@@ -33,4 +33,7 @@ object CommandConfig : ReadOnlyPluginConfig("Command") {
 
     @ValueDescription("comment命令的别名")
     val comment by value(arrayOf("评论"))
+
+    @ValueDescription("sea-operation命令的别名")
+    val seaOperation by value(arrayOf("海", "s"))
 }

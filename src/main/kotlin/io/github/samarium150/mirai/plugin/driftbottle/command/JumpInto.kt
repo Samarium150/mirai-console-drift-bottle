@@ -48,10 +48,9 @@ object JumpInto : SimpleCommand(
     @Handler
     suspend fun CommandSender.handle() {
         val sender = user
-        if (sender == null) {
-            randomDelay()
+        if (sender == null)
             sendMessage(ReplyConfig.jumpInto.replace("%num", Sea.contents.size.toString()))
-        } else {
+        else {
             if (!lock(sender.id)) {
                 sendMessage(ReplyConfig.overspeedMessage)
                 return
