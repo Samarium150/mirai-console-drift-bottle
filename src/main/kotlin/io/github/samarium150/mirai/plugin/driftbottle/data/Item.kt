@@ -87,7 +87,7 @@ class Item {
                     CommentData.comments[index]?.let {
                         if (it.isNotEmpty()) comments += "\n此漂流瓶的评论为"
                         it.forEach { each ->
-                            comments += "${each.sender}: ${each.content}"
+                            comments += "\n${each.sender}: ${each.content}"
                         }
                     }
                     add(ReplyConfig.pickupBottle.replace("%source", from).replace("%index", (index + 1).toString()))

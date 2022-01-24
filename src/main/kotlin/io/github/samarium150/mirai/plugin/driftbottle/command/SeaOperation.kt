@@ -39,11 +39,12 @@ object SeaOperation : CompositeCommand(
     @SubCommand("del", "rm")
     suspend fun CommandSender.remove(
         index: Int? = subject?.let { sub ->
-            indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.pop()?.minus(1)
+            indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.pop()?.plus(1)
         }
     ) {
-        if (isNotOutOfRange(index)) {
-            val result = runCatching { Sea.contents.removeAt(index) }.onFailure { e ->
+        val realIndex = index?.minus(1)
+        if (isNotOutOfRange(realIndex)) {
+            val result = runCatching { Sea.contents.removeAt(realIndex) }.onFailure { e ->
                 if (e !is IndexOutOfBoundsException) MiraiConsoleDriftBottle.logger.error(e)
             }
             randomDelay()
@@ -55,12 +56,13 @@ object SeaOperation : CompositeCommand(
     @SubCommand("query", "get")
     suspend fun CommandSender.query(
         index: Int? = subject?.let { sub ->
-            indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.peek()?.minus(1)
+            indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.peek()?.plus(1)
         }
     ) {
-        if (isNotOutOfRange(index)) {
+        val realIndex = index?.minus(1)
+        if (isNotOutOfRange(realIndex)) {
             val result = runCatching {
-                val item = Sea.contents[index]
+                val item = Sea.contents[realIndex]
                 """
                     漂流瓶序号: $index
                     ${item.source?.let { "漂流瓶发送群: ${it.name}(${it.id})" } ?: "此漂流瓶是私聊发送"}

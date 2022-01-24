@@ -14,7 +14,7 @@ version = "1.6.0"
 
 repositories {
     mavenLocal()
-    maven("https://maven.aliyun.com/repository/public")
+    maven("https://maven.aliyun.com/repository/central")
     mavenCentral()
 }
 

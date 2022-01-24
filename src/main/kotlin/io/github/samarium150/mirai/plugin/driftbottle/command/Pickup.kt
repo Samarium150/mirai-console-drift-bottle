@@ -42,27 +42,33 @@ object Pickup : SimpleCommand(
 
     @Suppress("unused")
     @Handler
-    suspend fun CommandSenderOnMessage<*>.handle(index: Int = Random().nextInt(Sea.contents.size)) {
-        val sender = fromEvent.sender
-        val subject = fromEvent.subject
-        if (!lock(sender.id)) {
-            sendMessage(ReplyConfig.overspeedMessage)
-            return
-        }
-        if (Sea.contents.size == 0) {
+    suspend fun CommandSenderOnMessage<*>.handle(index: Int = Random().nextInt(Sea.contents.size) + 1) {
+        val realIndex = index - 1
+        if (isNotOutOfRange(realIndex)) {
+            val sender = fromEvent.sender
+            val subject = fromEvent.subject
+            if (!lock(sender.id)) {
+                sendMessage(ReplyConfig.overspeedMessage)
+                return
+            }
+            if (Sea.contents.size == 0) {
+                randomDelay()
+                sendMessage(ReplyConfig.noItem)
+                unlock(sender.id)
+                return
+            }
+            val item = Sea.contents[realIndex]
+            if ((item.type == Item.Type.BOTTLE && !GeneralConfig.incrementalBottle)
+                || (item.type == Item.Type.BODY && !GeneralConfig.incrementalBody)
+            ) Sea.contents.removeAt(realIndex)
+            else indexOfBottle[subject.id]?.push(realIndex) ?: indexOfBottle.put(
+                subject.id,
+                Stack<Int>().put(realIndex)
+            )
             randomDelay()
-            sendMessage(ReplyConfig.noItem)
+            sendMessage(disableAt(item.toMessageChain(subject, realIndex), subject))
+            delay(GeneralConfig.perUse * 1000L)
             unlock(sender.id)
-            return
         }
-        val item = Sea.contents[index]
-        if ((item.type == Item.Type.BOTTLE && !GeneralConfig.incrementalBottle)
-            || (item.type == Item.Type.BODY && !GeneralConfig.incrementalBody)
-        ) Sea.contents.removeAt(index)
-        else indexOfBottle[subject.id]?.push(index) ?: indexOfBottle.put(subject.id, Stack<Int>().put(index))
-        randomDelay()
-        sendMessage(disableAt(item.toMessageChain(subject, index), subject))
-        delay(GeneralConfig.perUse * 1000L)
-        unlock(sender.id)
     }
 }

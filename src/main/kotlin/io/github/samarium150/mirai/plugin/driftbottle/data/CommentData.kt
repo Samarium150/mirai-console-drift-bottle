@@ -28,7 +28,7 @@ import java.util.*
 data class CommentData(
     val sender: String,
     val content: String,
-){
+) {
     @Suppress("unused")
     val time: Long = Date().time
 

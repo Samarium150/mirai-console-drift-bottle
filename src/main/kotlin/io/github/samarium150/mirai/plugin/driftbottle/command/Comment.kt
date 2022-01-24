@@ -41,14 +41,15 @@ object Comment : SimpleCommand(
     @Handler
     suspend fun CommandSender.handle(
         index: Int? = subject?.let { sub ->
-            indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.peek()?.minus(1)
+            indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.peek()?.plus(1)
         }, comment: String
     ) {
-        if (isNotOutOfRange(index)) {
+        val realIndex = index?.minus(1)
+        if (isNotOutOfRange(realIndex)) {
             val nick = user?.nameCardOrNick ?: "Console"
-            val tempo = comments[index] ?: mutableListOf()
-            tempo.add(index, CommentData(nick, comment))
-            comments[index] = tempo
+            val tempo = comments[realIndex] ?: mutableListOf()
+            tempo.add(CommentData(nick, comment))
+            comments[realIndex] = tempo
             randomDelay()
             sendMessage("已评论$index 漂流瓶") // 或许可由用户自行配置
         }
