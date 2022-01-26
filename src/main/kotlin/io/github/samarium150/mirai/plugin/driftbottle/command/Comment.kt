@@ -41,6 +41,8 @@ object Comment : SimpleCommand(
 
     @OptIn(ExperimentalCommandDescriptors::class, ConsoleExperimentalApi::class)
     override val prefixOptional: Boolean = true
+    override val usage: String
+        get() = "评论 内容 漂流瓶序号"
 
     @Suppress("unused")
     @Handler

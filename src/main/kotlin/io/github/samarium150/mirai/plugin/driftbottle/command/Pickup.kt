@@ -61,10 +61,14 @@ object Pickup : SimpleCommand(
             if ((item.type == Item.Type.BOTTLE && !GeneralConfig.incrementalBottle)
                 || (item.type == Item.Type.BODY && !GeneralConfig.incrementalBody)
             ) Sea.contents.removeAt(realIndex)
-            else indexOfBottle[subject.id]?.push(realIndex) ?: indexOfBottle.put(
-                subject.id,
-                Stack<Int>().put(realIndex)
-            )
+            else {
+                if (indexOfBottle[subject.id]?.contains(realIndex) ?: false)
+                    indexOfBottle[subject.id]?.remove(realIndex)
+                indexOfBottle[subject.id]?.push(realIndex) ?: indexOfBottle.put(
+                    subject.id,
+                    Stack<Int>().put(realIndex)
+                )
+            }
             runCatching {
                 randomDelay()
                 sendMessage(disableAt(item.toMessageChain(subject, realIndex), subject))
