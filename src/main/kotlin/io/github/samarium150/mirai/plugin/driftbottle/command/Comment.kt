@@ -47,9 +47,10 @@ object Comment : SimpleCommand(
         val realIndex = index?.minus(1)
         if (isNotOutOfRange(realIndex)) {
             val nick = user?.nameCardOrNick ?: "Console"
-            val tempo = comments[realIndex] ?: mutableListOf()
-            tempo.add(CommentData(nick, comment))
-            comments[realIndex] = tempo
+            comments[realIndex]?.add(CommentData(nick, comment)) ?: comments.put(
+                realIndex,
+                mutableListOf(CommentData(nick, comment))
+            )
             randomDelay()
             sendMessage("已评论$index 漂流瓶") // 或许可由用户自行配置
         }

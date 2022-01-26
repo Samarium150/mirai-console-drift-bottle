@@ -72,7 +72,6 @@ object SeaOperation : CompositeCommand(
             }.onFailure { e ->
                 if (e !is IndexOutOfBoundsException) MiraiConsoleDriftBottle.logger.error(e)
             }
-            randomDelay()
             sendMessage(result.getOrNull() ?: "无法找到漂流瓶$index")
         }
     }
