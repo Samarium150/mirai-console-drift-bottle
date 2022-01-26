@@ -24,6 +24,8 @@ import io.github.samarium150.mirai.plugin.driftbottle.util.isNotOutOfRange
 import io.github.samarium150.mirai.plugin.driftbottle.util.randomDelay
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
+import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
+import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.nameCardOrNick
 
 /**
@@ -37,12 +39,15 @@ object Comment : SimpleCommand(
 ) {
     private val comments by CommentData.Companion::comments
 
+    @OptIn(ExperimentalCommandDescriptors::class, ConsoleExperimentalApi::class)
+    override val prefixOptional: Boolean = true
+
     @Suppress("unused")
     @Handler
     suspend fun CommandSender.handle(
-        index: Int? = subject?.let { sub ->
+        comment: String, index: Int? = subject?.let { sub ->
             indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.peek()?.plus(1)
-        }, comment: String
+        }
     ) {
         val realIndex = index?.minus(1)
         if (isNotOutOfRange(realIndex)) {
