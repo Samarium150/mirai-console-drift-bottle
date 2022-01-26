@@ -53,8 +53,8 @@ object Pickup : SimpleCommand(
             }
             if (Sea.contents.size == 0) {
                 randomDelay()
-                sendMessage(ReplyConfig.noItem)
                 unlock(sender.id)
+                sendMessage(ReplyConfig.noItem)
                 return
             }
             val item = Sea.contents[realIndex]
@@ -65,9 +65,11 @@ object Pickup : SimpleCommand(
                 subject.id,
                 Stack<Int>().put(realIndex)
             )
-            randomDelay()
-            sendMessage(disableAt(item.toMessageChain(subject, realIndex), subject))
-            delay(GeneralConfig.perUse * 1000L)
+            runCatching {
+                randomDelay()
+                sendMessage(disableAt(item.toMessageChain(subject, realIndex), subject))
+                delay(GeneralConfig.perUse * 1000L)
+            }
             unlock(sender.id)
         }
     }

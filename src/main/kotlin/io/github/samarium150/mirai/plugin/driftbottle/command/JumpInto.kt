@@ -67,9 +67,11 @@ object JumpInto : SimpleCommand(
             ) else null
             val body = Item(Item.Type.BODY, owner, source)
             Sea.contents.add(body)
-            randomDelay()
-            sendMessage(ReplyConfig.jumpInto.replace("%num", (Sea.contents.size - 1).toString()))
-            delay(GeneralConfig.perUse * 1000L)
+            runCatching{
+                randomDelay()
+                sendMessage(ReplyConfig.jumpInto.replace("%num", (Sea.contents.size - 1).toString()))
+                delay(GeneralConfig.perUse * 1000L)
+            }
             unlock(sender.id)
         }
     }

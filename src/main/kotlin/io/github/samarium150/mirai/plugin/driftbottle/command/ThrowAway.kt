@@ -63,11 +63,9 @@ object ThrowAway : SimpleCommand(
             runCatching {
                 fromEvent.nextMessage(30_000)
             }.onFailure {
-                sendMessage(ReplyConfig.timeoutMessage)
-            }.getOrNull() ?: run {
                 unlock(sender.id)
-                return
-            }
+                sendMessage(ReplyConfig.timeoutMessage)
+            }.getOrNull() ?: return
         }
         forbidMessageKeys.forEach {
             if (chain.contains(it)) {
@@ -110,9 +108,8 @@ object ThrowAway : SimpleCommand(
                     +disableAt(chain, subject)
                     +PlainText(parts[1])
                 })
-
+            delay(GeneralConfig.perUse * 1000L)
         }
-        delay(GeneralConfig.perUse * 1000L)
         unlock(sender.id)
     }
 }
