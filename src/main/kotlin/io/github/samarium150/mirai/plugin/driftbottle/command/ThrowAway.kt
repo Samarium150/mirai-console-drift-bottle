@@ -69,6 +69,7 @@ object ThrowAway : SimpleCommand(
         }
         forbidMessageKeys.forEach {
             if (chain.contains(it)) {
+                unlock(sender.id)
                 sendMessage("漂流瓶中有不允许出现的消息类型")
                 return
             }
