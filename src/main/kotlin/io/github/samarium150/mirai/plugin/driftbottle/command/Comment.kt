@@ -27,6 +27,8 @@ import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.nameCardOrNick
+import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.message.data.SingleMessage
 
 /**
  * @author LaoLittle
@@ -47,19 +49,24 @@ object Comment : SimpleCommand(
     @Suppress("unused")
     @Handler
     suspend fun CommandSender.handle(
-        comment: String, index: Int? = subject?.let { sub ->
+        comment: SingleMessage, index: Int? = subject?.let { sub ->
             indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.peek()?.plus(1)
         }
     ) {
+        if (comment !is PlainText){
+            sendMessage("评论只能包含纯文本！")
+            return
+        }
+        val commentStr = comment.content
         val realIndex = index?.minus(1)
         if (isNotOutOfRange(realIndex)) {
             val nick = user?.nameCardOrNick ?: "Console"
-            comments[realIndex]?.add(CommentData(nick, comment)) ?: comments.put(
+            comments[realIndex]?.add(CommentData(nick, commentStr)) ?: comments.put(
                 realIndex,
-                mutableListOf(CommentData(nick, comment))
+                mutableListOf(CommentData(nick, commentStr))
             )
             randomDelay()
-            sendMessage("已评论$index 漂流瓶") // 或许可由用户自行配置
+            sendMessage("已评论漂流瓶$index") // 或许可由用户自行配置
         }
     }
 }
