@@ -109,15 +109,17 @@ internal suspend fun CommandSender.isNotOutOfRange(index: Int?): Boolean {
     contract {
         returns(true) implies (index != null)
     }
-    if (index == null) {
-        subject?.sendMessage("请尝试输入序号") ?: MiraiConsoleDriftBottle.logger.error { "控制台使用请输入序号" }
-        return false
+    return when (index) {
+        null -> {
+            subject?.sendMessage("请尝试输入序号") ?: MiraiConsoleDriftBottle.logger.error { "控制台使用请输入序号" }
+            false
+        }
+        !in 1..Sea.contents.size -> {
+            sendMessage("数字超出范围！")
+            false
+        }
+        else -> true
     }
-    if (index < 0 || index > Sea.contents.size) {
-        sendMessage("数字超出范围！")
-        return false
-    }
-    return true
 }
 
 internal val indexOfBottle = mutableMapOf<Long, Stack<Int>>()
