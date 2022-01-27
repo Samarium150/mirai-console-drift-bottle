@@ -53,11 +53,11 @@ object ReplyConfig : ReadOnlyPluginConfig("Reply") {
     val waitForNextMessage: String by value("请把想说的话写在纸条上发送出来吧~")
 
     @ValueDescription("等待漂流瓶内容超时的回复")
-    val timeoutMessage: String by value("是不是没有还没有想到要写什么呢？那待会再找我也行哦")
+    val timeout: String by value("是不是没有还没有想到要写什么呢？那待会再找我也行哦")
 
     @ValueDescription("漂流瓶内容不合规的回复")
-    val invalidMessage: String by value("不要往瓶子里塞奇怪的东西哦~")
+    val invalid: String by value("不要往瓶子里塞奇怪的东西哦~")
 
     @ValueDescription("漂流瓶使用速度过快的回复")
-    val overspeedMessage: String by value("好快啊，能不能慢一点")
+    val inCooldown: String by value("好快啊，能不能慢一点")
 }

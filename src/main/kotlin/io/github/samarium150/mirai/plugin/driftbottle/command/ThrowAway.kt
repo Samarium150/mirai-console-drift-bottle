@@ -53,7 +53,7 @@ object ThrowAway : SimpleCommand(
         val sender = fromEvent.sender
         val subject = fromEvent.subject
         if (!lock(sender.id)) {
-            sendMessage(ReplyConfig.overspeedMessage)
+            sendMessage(ReplyConfig.inCooldown)
             return
         }
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
@@ -64,7 +64,7 @@ object ThrowAway : SimpleCommand(
                 fromEvent.nextMessage(30_000)
             }.onFailure {
                 unlock(sender.id)
-                sendMessage(ReplyConfig.timeoutMessage)
+                sendMessage(ReplyConfig.timeout)
             }.getOrNull() ?: return
         }
         forbidMessageKeys.forEach {
@@ -76,7 +76,7 @@ object ThrowAway : SimpleCommand(
         }
         if (GeneralConfig.enableContentCensor) runCatching {
             if (!ContentCensor.determine(chain)) {
-                sendMessage(ReplyConfig.invalidMessage)
+                sendMessage(ReplyConfig.invalid)
                 return
             }
         }.onFailure {

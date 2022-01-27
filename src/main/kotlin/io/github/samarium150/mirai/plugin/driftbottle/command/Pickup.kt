@@ -48,7 +48,7 @@ object Pickup : SimpleCommand(
             val sender = fromEvent.sender
             val subject = fromEvent.subject
             if (!lock(sender.id)) {
-                sendMessage(ReplyConfig.overspeedMessage)
+                sendMessage(ReplyConfig.inCooldown)
                 return
             }
             if (Sea.contents.size == 0) {
@@ -62,8 +62,7 @@ object Pickup : SimpleCommand(
                 || (item.type == Item.Type.BODY && !GeneralConfig.incrementalBody)
             ) Sea.contents.removeAt(realIndex)
             else {
-                if (indexOfBottle[subject.id]?.contains(realIndex) ?: false)
-                    indexOfBottle[subject.id]?.remove(realIndex)
+                indexOfBottle[subject.id]?.remove(realIndex)
                 indexOfBottle[subject.id]?.push(realIndex) ?: indexOfBottle.put(
                     subject.id,
                     Stack<Int>().put(realIndex)

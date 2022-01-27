@@ -52,7 +52,7 @@ object JumpInto : SimpleCommand(
             sendMessage(ReplyConfig.jumpInto.replace("%num", Sea.contents.size.toString()))
         else {
             if (!lock(sender.id)) {
-                sendMessage(ReplyConfig.overspeedMessage)
+                sendMessage(ReplyConfig.inCooldown)
                 return
             }
             val subject = subject
@@ -67,7 +67,7 @@ object JumpInto : SimpleCommand(
             ) else null
             val body = Item(Item.Type.BODY, owner, source)
             Sea.contents.add(body)
-            runCatching{
+            runCatching {
                 randomDelay()
                 sendMessage(ReplyConfig.jumpInto.replace("%num", (Sea.contents.size - 1).toString()))
                 delay(GeneralConfig.perUse * 1000L)

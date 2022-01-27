@@ -30,7 +30,6 @@ import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.message.data.*
-import net.mamoe.mirai.utils.error
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -111,7 +110,7 @@ internal suspend fun CommandSender.isNotOutOfRange(index: Int?): Boolean {
     }
     return when (index) {
         null -> {
-            subject?.sendMessage("请尝试输入序号") ?: MiraiConsoleDriftBottle.logger.error { "控制台使用请输入序号" }
+            subject?.sendMessage("请尝试输入序号") ?: MiraiConsoleDriftBottle.logger.error("控制台使用请输入序号")
             false
         }
         !in 1..Sea.contents.size -> {

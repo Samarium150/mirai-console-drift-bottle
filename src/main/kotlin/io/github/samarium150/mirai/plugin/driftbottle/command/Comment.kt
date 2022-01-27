@@ -41,19 +41,22 @@ object Comment : SimpleCommand(
 ) {
     private val comments by CommentData.Companion::comments
 
-    @OptIn(ExperimentalCommandDescriptors::class, ConsoleExperimentalApi::class)
+    @ExperimentalCommandDescriptors
+    @ConsoleExperimentalApi
     override val prefixOptional: Boolean = true
+
     override val usage: String
         get() = "评论 内容 漂流瓶序号"
 
     @Suppress("unused")
     @Handler
     suspend fun CommandSender.handle(
-        comment: SingleMessage, index: Int? = subject?.let { sub ->
+        comment: SingleMessage,
+        index: Int? = subject?.let { sub ->
             indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.peek()?.plus(1)
         }
     ) {
-        if (comment !is PlainText){
+        if (comment !is PlainText) {
             sendMessage("评论只能包含纯文本！")
             return
         }
@@ -66,7 +69,7 @@ object Comment : SimpleCommand(
                 mutableListOf(CommentData(nick, commentStr))
             )
             randomDelay()
-            sendMessage("已评论漂流瓶$index") // 或许可由用户自行配置
+            sendMessage("已评论漂流瓶 $index") // 或许可由用户自行配置
         }
     }
 }
