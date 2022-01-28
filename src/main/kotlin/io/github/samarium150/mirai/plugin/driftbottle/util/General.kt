@@ -22,8 +22,11 @@ import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle.sa
 import io.github.samarium150.mirai.plugin.driftbottle.config.AdvancedConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
+import io.github.samarium150.mirai.plugin.driftbottle.data.comments
+import io.github.samarium150.mirai.plugin.driftbottle.data.useLock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
@@ -128,4 +131,19 @@ internal fun Long.timestampToString(): String {
         .toInstant()
         .atZone(ZoneId.of("Asia/Shanghai"))
         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+}
+
+/**
+ *
+ * */
+internal suspend fun resortComments(from: Int) {
+    MiraiConsoleDriftBottle.launch {
+        useLock {
+            comments.remove(from)
+            comments.filter { (t, _) -> t > from }.forEach { (t, _) ->
+                comments[t - 1] = comments.getValue(t)
+                comments.remove(t)
+            }
+        }
+    }
 }

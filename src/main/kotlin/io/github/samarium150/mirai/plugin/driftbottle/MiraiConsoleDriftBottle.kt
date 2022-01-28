@@ -63,7 +63,8 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
         Pickup.register()
         ThrowAway.register()
         SeaOperation.register()
-        Comment.register()
+        if (GeneralConfig.incrementalBottle)
+            Comment.register()
     }
 
     override fun onEnable() {

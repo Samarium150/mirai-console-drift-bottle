@@ -19,10 +19,7 @@ package io.github.samarium150.mirai.plugin.driftbottle.command
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
 import io.github.samarium150.mirai.plugin.driftbottle.config.CommandConfig
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
-import io.github.samarium150.mirai.plugin.driftbottle.util.indexOfBottle
-import io.github.samarium150.mirai.plugin.driftbottle.util.isNotOutOfRange
-import io.github.samarium150.mirai.plugin.driftbottle.util.randomDelay
-import io.github.samarium150.mirai.plugin.driftbottle.util.timestampToString
+import io.github.samarium150.mirai.plugin.driftbottle.util.*
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 
@@ -46,6 +43,7 @@ object SeaOperation : CompositeCommand(
         if (isNotOutOfRange(realIndex)) {
             val result = runCatching {
                 Sea.contents.removeAt(realIndex)
+                resortComments(realIndex)
             }.onFailure { e ->
                 if (e !is IndexOutOfBoundsException) MiraiConsoleDriftBottle.logger.error(e)
             }

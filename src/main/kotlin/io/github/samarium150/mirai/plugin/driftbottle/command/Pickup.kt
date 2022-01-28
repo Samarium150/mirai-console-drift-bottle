@@ -40,6 +40,7 @@ object Pickup : SimpleCommand(
     @ExperimentalCommandDescriptors
     override val prefixOptional = true
 
+
     @Suppress("unused")
     @Handler
     suspend fun CommandSenderOnMessage<*>.handle(index: Int = Random().nextInt(Sea.contents.size) + 1) {
@@ -60,8 +61,10 @@ object Pickup : SimpleCommand(
             val item = Sea.contents[realIndex]
             if ((item.type == Item.Type.BOTTLE && !GeneralConfig.incrementalBottle)
                 || (item.type == Item.Type.BODY && !GeneralConfig.incrementalBody)
-            ) Sea.contents.removeAt(realIndex)
-            else {
+            ) {
+                Sea.contents.removeAt(realIndex)
+                resortComments(realIndex)
+            } else {
                 indexOfBottle[subject.id]?.remove(realIndex)
                 indexOfBottle[subject.id]?.push(realIndex) ?: indexOfBottle.put(
                     subject.id,

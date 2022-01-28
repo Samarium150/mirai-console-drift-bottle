@@ -16,10 +16,14 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle.data
 
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.console.data.AutoSavePluginData
 import net.mamoe.mirai.console.data.value
 import java.util.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * @author LaoLittle
@@ -36,3 +40,26 @@ data class CommentData(
         val comments by value(mutableMapOf<Int, MutableList<CommentData>>())
     }
 }
+
+private val mutex = Mutex()
+
+var isLocked = false
+    private set
+
+@OptIn(ExperimentalContracts::class)
+suspend fun <T> useLock(owner: Any? = null, action: suspend () -> T): T {
+    contract {
+        callsInPlace(action, InvocationKind.EXACTLY_ONCE)
+    }
+
+    mutex.lock(owner)
+    isLocked = true
+    try {
+        return action()
+    } finally {
+        isLocked = false
+        mutex.unlock(owner)
+    }
+}
+
+val comments by CommentData.Companion::comments
