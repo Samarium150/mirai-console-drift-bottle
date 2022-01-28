@@ -22,7 +22,7 @@ import io.github.samarium150.mirai.plugin.driftbottle.data.CommentData
 import io.github.samarium150.mirai.plugin.driftbottle.util.indexOfBottle
 import io.github.samarium150.mirai.plugin.driftbottle.util.isNotOutOfRange
 import io.github.samarium150.mirai.plugin.driftbottle.util.randomDelay
-import net.mamoe.mirai.console.command.CommandSender
+import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
@@ -50,11 +50,10 @@ object Comment : SimpleCommand(
 
     @Suppress("unused")
     @Handler
-    suspend fun CommandSender.handle(
+    suspend fun CommandSenderOnMessage<*>.handle(
         comment: SingleMessage,
-        index: Int? = subject?.let { sub ->
-            indexOfBottle[sub.id]?.takeIf { it.isNotEmpty() }?.peek()?.plus(1)
-        }
+        index: Int? = indexOfBottle[fromEvent.subject.id]?.takeIf { it.isNotEmpty() }?.peek()?.plus(1)
+
     ) {
         if (comment !is PlainText) {
             sendMessage("评论只能包含纯文本！")
@@ -63,7 +62,7 @@ object Comment : SimpleCommand(
         val commentStr = comment.content
         val realIndex = index?.minus(1)
         if (isNotOutOfRange(realIndex)) {
-            val nick = user?.nameCardOrNick ?: "Console"
+            val nick = fromEvent.sender.nameCardOrNick
             comments[realIndex]?.add(CommentData(nick, commentStr)) ?: comments.put(
                 realIndex,
                 mutableListOf(CommentData(nick, commentStr))
