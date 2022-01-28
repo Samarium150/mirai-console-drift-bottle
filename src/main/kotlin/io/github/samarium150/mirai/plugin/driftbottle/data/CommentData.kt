@@ -47,7 +47,7 @@ var isLocked = false
     private set
 
 @OptIn(ExperimentalContracts::class)
-suspend fun <T> useLock(owner: Any? = null, action: suspend () -> T): T {
+suspend fun <T> useLock(owner: Any? = null, action: () -> T): T {
     contract {
         callsInPlace(action, InvocationKind.EXACTLY_ONCE)
     }
