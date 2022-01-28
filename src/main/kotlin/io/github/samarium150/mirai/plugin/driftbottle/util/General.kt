@@ -116,7 +116,7 @@ internal suspend fun CommandSender.isNotOutOfRange(index: Int?): Boolean {
             subject?.sendMessage("请尝试输入序号") ?: MiraiConsoleDriftBottle.logger.error("控制台使用请输入序号")
             false
         }
-        !in 1..Sea.contents.size -> {
+        !in 0 until Sea.contents.size -> {
             sendMessage("数字超出范围！")
             false
         }
