@@ -30,7 +30,8 @@ import kotlin.contracts.contract
  */
 @Serializable
 data class CommentData(
-    val sender: String,
+    val senderId: Long,
+    val senderName: String,
     val content: String,
 ) {
     @Suppress("unused")

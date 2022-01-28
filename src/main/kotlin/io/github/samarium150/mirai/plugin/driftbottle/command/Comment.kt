@@ -63,9 +63,10 @@ object Comment : SimpleCommand(
         val realIndex = index?.minus(1)
         if (isNotOutOfRange(realIndex)) {
             val nick = fromEvent.sender.nameCardOrNick
-            comments[realIndex]?.add(CommentData(nick, commentStr)) ?: comments.put(
+            val id = fromEvent.sender.id
+            comments[realIndex]?.add(CommentData(id, nick, commentStr)) ?: comments.put(
                 realIndex,
-                mutableListOf(CommentData(nick, commentStr))
+                mutableListOf(CommentData(id, nick, commentStr))
             )
             randomDelay()
             sendMessage("已评论漂流瓶 $index") // 或许可由用户自行配置

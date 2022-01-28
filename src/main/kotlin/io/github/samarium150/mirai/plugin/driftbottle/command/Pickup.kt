@@ -28,6 +28,7 @@ import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
+import net.mamoe.mirai.message.data.MessageChain
 import java.util.*
 
 object Pickup : SimpleCommand(
@@ -73,7 +74,8 @@ object Pickup : SimpleCommand(
             }
             runCatching {
                 randomDelay()
-                sendMessage(disableAt(item.toMessageChain(subject, realIndex), subject))
+                val message = item.toMessage(subject, realIndex)
+                sendMessage(if (message is MessageChain) disableAt(message, subject) else message)
                 delay(GeneralConfig.perUse * 1000L)
             }
             unlock(sender.id)
