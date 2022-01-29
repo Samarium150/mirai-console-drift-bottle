@@ -64,7 +64,7 @@ object Pickup : SimpleCommand(
                 || (item.type == Item.Type.BODY && !GeneralConfig.incrementalBody)
             ) {
                 Sea.contents.removeAt(realIndex)
-                resortComments(realIndex)
+                rearrangeComments(realIndex)
             } else {
                 indexOfBottle[subject.id]?.remove(realIndex)
                 indexOfBottle[subject.id]?.push(realIndex) ?: indexOfBottle.put(

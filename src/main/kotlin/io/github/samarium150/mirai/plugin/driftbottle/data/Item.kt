@@ -87,7 +87,11 @@ class Item {
                                 comments += "\n${each.senderName}: ${each.content}"
                             }
                         }
-                        add(ReplyConfig.pickupBottle.replace("%source", from).replace("%index", (index + 1).toString()))
+                        add(
+                            ReplyConfig.pickupBottle
+                                .replace("%source", from)
+                                .replace("%index", (index + 1).toString())
+                        )
                         add(MessageChain.deserializeFromJsonString(chainJson))
                         add(comments) // 本来想让用户自定义评论位置的，但是...摆了
                     } else add(MessageChain.deserializeFromJsonString(chainJson))

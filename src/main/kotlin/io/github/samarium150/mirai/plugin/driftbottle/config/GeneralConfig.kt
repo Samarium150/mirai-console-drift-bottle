@@ -40,6 +40,6 @@ object GeneralConfig : ReadOnlyPluginConfig("General") {
     @ValueDescription("随机延迟回复的时间区间 (单位: 毫秒)")
     val randomDelayInterval: Pair<Long, Long> by value(Pair(1000L, 1500L))
 
-    @ValueDescription("使用转发消息装载漂流瓶")
+    @ValueDescription("使用转发消息展示漂流瓶")
     val displayInForward by value(false)
 }
