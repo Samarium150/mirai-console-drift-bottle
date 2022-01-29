@@ -110,7 +110,26 @@ class Item {
                 }
             }
         }
-        return if (!GeneralConfig.displayInForward) messageChain
+        var useOrigin = false
+        for (it in messageChain) {
+            if (Audio::class.java == it.javaClass)
+                when (it) {
+                    is Audio, is FlashImage -> {
+                        useOrigin = true
+                        break
+                    }
+                }
+            /*
+            when (it.javaClass){
+                Audio::class.java, FlashImage::class.java -> { useOrigin = true;break }
+            }
+            */
+        }
+        /*messageChain.forEachPlus {
+            false
+        }
+         */
+        return if (!GeneralConfig.displayInForward || useOrigin) messageChain
         else buildForwardMessage(contact, CustomForwardMsgDisplay(index + 1, this)) {
             add(owner.id, owner.name, messageChain)
             CommentData.comments[index]?.let {

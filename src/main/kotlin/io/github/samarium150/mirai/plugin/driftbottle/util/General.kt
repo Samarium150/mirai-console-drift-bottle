@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
+import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.message.data.*
@@ -93,6 +94,7 @@ internal fun <E> Stack<E>.put(item: E): Stack<E> {
     return this
 }
 
+@OptIn(ConsoleExperimentalApi::class)
 internal val forbidMessageKeys by lazy {
     mutableListOf<MessageKey<SingleMessage>>().apply {
         AdvancedConfig.cannotSaveMessageTypes.forEach { (type, bool) ->

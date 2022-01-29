@@ -17,9 +17,11 @@
 package io.github.samarium150.mirai.plugin.driftbottle.config
 
 import kotlinx.serialization.Serializable
+import net.mamoe.mirai.console.data.PluginDataExtensions.withDefault
 import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
+import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.message.data.MessageContent
 import net.mamoe.mirai.message.data.MessageKey
 
@@ -28,6 +30,7 @@ object AdvancedConfig : ReadOnlyPluginConfig("Advanced") {
     @ValueDescription("At显示为纯文本")
     val disableDirectAt by value(false)
 
+    @OptIn(ConsoleExperimentalApi::class)
     @ValueDescription(
         """
         漂流瓶消息类型控制
@@ -37,7 +40,7 @@ object AdvancedConfig : ReadOnlyPluginConfig("Advanced") {
         FileMessage: 文件消息 (貌似漂流瓶无法存放文件，但还是先放着)
         """
     )
-    val cannotSaveMessageTypes by value(MessageType.values().associateWith { true })
+    val cannotSaveMessageTypes by value(MessageType.values().associateWith { true }).withDefault { true }
 
     @Serializable
     enum class MessageType {
