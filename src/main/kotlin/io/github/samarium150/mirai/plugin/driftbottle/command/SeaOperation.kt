@@ -43,7 +43,7 @@ object SeaOperation : CompositeCommand(
         if (isNotOutOfRange(realIndex)) {
             val result = runCatching {
                 Sea.contents.removeAt(realIndex)
-                resortComments(realIndex)
+                rearrangeComments(realIndex)
             }.onFailure { e ->
                 if (e !is IndexOutOfBoundsException) MiraiConsoleDriftBottle.logger.error(e)
             }

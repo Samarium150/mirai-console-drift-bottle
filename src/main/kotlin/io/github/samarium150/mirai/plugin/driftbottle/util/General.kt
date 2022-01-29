@@ -135,10 +135,7 @@ internal fun Long.timestampToString(): String {
         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 }
 
-/**
- *
- * */
-internal suspend fun resortComments(from: Int) {
+internal suspend fun rearrangeComments(from: Int) {
     MiraiConsoleDriftBottle.launch {
         useLock {
             comments.remove(from)
