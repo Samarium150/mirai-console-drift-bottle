@@ -35,7 +35,7 @@ data class CommentData(
     val content: String,
 ) {
     @Suppress("unused")
-    val time: Long = Date().time
+    val timestamp: Long = Date().time
 
     companion object : AutoSavePluginData("Comment") {
         val comments by value(mutableMapOf<Int, MutableList<CommentData>>())

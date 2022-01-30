@@ -114,30 +114,30 @@ class Item {
                 }
             }
         }
-        var useOrigin = false
-        for (it in messageChain) {
-            when (it) {
-                is Audio, is FlashImage -> {
-                    useOrigin = true
-                    break
-                }
-            }
-            /*
-            when (it.javaClass){
-                Audio::class.java, FlashImage::class.java -> { useOrigin = true;break }
-            }
-            */
-        }
+        // var useOrigin = false
+        /*  for (it in messageChain) {
+
+
+              when (it.javaClass){
+                  Audio::class.java, FlashImage::class.java -> { useOrigin = true;break }
+              }
+
+          }*/
         /*messageChain.forEachPlus {
             false
         }
          */
-        return if (!GeneralConfig.displayInForward || useOrigin) messageChain
+        return if (!GeneralConfig.displayInForward || messageChain.any {
+                when (it) {
+                    is Audio, is FlashImage -> true
+                    else -> false
+                }
+            }) messageChain
         else buildForwardMessage(contact, CustomForwardMsgDisplay(index + 1, this)) {
-            add(owner.id, owner.name, messageChain)
+            add(owner.id, owner.name, messageChain, timestamp.seconds)
             CommentData.comments[index]?.let {
                 it.forEach { each ->
-                    add(each.senderId, each.senderName, PlainText(each.content))
+                    add(each.senderId, each.senderName, PlainText(each.content), each.timestamp.seconds)
                 }
             }
         }

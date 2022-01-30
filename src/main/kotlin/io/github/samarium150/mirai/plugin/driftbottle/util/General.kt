@@ -146,3 +146,5 @@ internal suspend fun rearrangeComments(from: Int) {
         }
     }
 }
+
+internal val Long.seconds get() = (this / 1000).toInt()
