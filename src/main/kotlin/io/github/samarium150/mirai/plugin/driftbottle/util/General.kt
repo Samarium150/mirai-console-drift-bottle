@@ -97,7 +97,7 @@ internal fun <E> Stack<E>.put(item: E): Stack<E> {
 @OptIn(ConsoleExperimentalApi::class)
 internal val forbidMessageKeys by lazy {
     mutableListOf<MessageKey<SingleMessage>>().apply {
-        AdvancedConfig.cannotSaveMessageTypes.forEach { (type, bool) ->
+        AdvancedConfig.saveMessageTypes.forEach { (type, bool) ->
             if (!bool) add(type.toMessageKey())
         }
     }.toTypedArray()

@@ -60,4 +60,7 @@ object ReplyConfig : ReadOnlyPluginConfig("Reply") {
 
     @ValueDescription("漂流瓶使用速度过快的回复")
     val inCooldown: String by value("好快啊，能不能慢一点")
+
+    @ValueDescription("漂流瓶消息类型被禁用的回复")
+    val bannedMessageType: String by value("不要往瓶子里塞这种类型的消息哦~")
 }

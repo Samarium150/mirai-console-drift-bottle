@@ -41,7 +41,6 @@ object Pickup : SimpleCommand(
     @ExperimentalCommandDescriptors
     override val prefixOptional = true
 
-
     @Suppress("unused")
     @Handler
     suspend fun CommandSenderOnMessage<*>.handle(index: Int = Random().nextInt(Sea.contents.size) + 1) {

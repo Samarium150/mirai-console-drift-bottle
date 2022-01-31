@@ -114,19 +114,6 @@ class Item {
                 }
             }
         }
-        // var useOrigin = false
-        /*  for (it in messageChain) {
-
-
-              when (it.javaClass){
-                  Audio::class.java, FlashImage::class.java -> { useOrigin = true;break }
-              }
-
-          }*/
-        /*messageChain.forEachPlus {
-            false
-        }
-         */
         return if (!GeneralConfig.displayInForward || messageChain.any {
                 when (it) {
                     is Audio, is FlashImage -> true
