@@ -22,15 +22,13 @@ import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.driftbottle.data.Item
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
-import io.github.samarium150.mirai.plugin.driftbottle.util.disableAt
-import io.github.samarium150.mirai.plugin.driftbottle.util.lock
-import io.github.samarium150.mirai.plugin.driftbottle.util.randomDelay
-import io.github.samarium150.mirai.plugin.driftbottle.util.unlock
+import io.github.samarium150.mirai.plugin.driftbottle.util.*
 import kotlinx.coroutines.delay
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
+import net.mamoe.mirai.message.data.MessageChain
 import java.util.*
 
 object Pickup : SimpleCommand(
@@ -45,28 +43,41 @@ object Pickup : SimpleCommand(
 
     @Suppress("unused")
     @Handler
-    suspend fun CommandSenderOnMessage<*>.handle() {
-        val sender = fromEvent.sender
-        val subject = fromEvent.subject
-        if (!lock(sender.id)) return
-        if (Sea.contents.size == 0) {
-            randomDelay().also {
+    suspend fun CommandSenderOnMessage<*>.handle(index: Int = Random().nextInt(Sea.contents.size) + 1) {
+        val realIndex = index - 1
+        if (isNotOutOfRange(realIndex)) {
+            val sender = fromEvent.sender
+            val subject = fromEvent.subject
+            if (!lock(sender.id)) {
+                sendMessage(ReplyConfig.inCooldown)
+                return
+            }
+            if (Sea.contents.size == 0) {
+                randomDelay()
+                unlock(sender.id)
                 sendMessage(ReplyConfig.noItem)
-                unlock(sender.id)
+                return
             }
-            return
-        }
-        val index = Random().nextInt(Sea.contents.size)
-        val item = Sea.contents[index]
-        if ((item.type == Item.Type.BOTTLE && !GeneralConfig.incrementalBottle)
-            || (item.type == Item.Type.BODY && !GeneralConfig.incrementalBody)
-        )
-            Sea.contents.removeAt(index)
-        randomDelay().also {
-            sendMessage(disableAt(item.toMessageChain(subject), subject)).also {
+            val item = Sea.contents[realIndex]
+            if ((item.type == Item.Type.BOTTLE && !GeneralConfig.incrementalBottle)
+                || (item.type == Item.Type.BODY && !GeneralConfig.incrementalBody)
+            ) {
+                Sea.contents.removeAt(realIndex)
+                rearrangeComments(realIndex)
+            } else {
+                indexOfBottle[subject.id]?.remove(realIndex)
+                indexOfBottle[subject.id]?.push(realIndex) ?: indexOfBottle.put(
+                    subject.id,
+                    Stack<Int>().put(realIndex)
+                )
+            }
+            runCatching {
+                randomDelay()
+                val message = item.toMessage(subject, realIndex)
+                sendMessage(if (message is MessageChain) disableAt(message, subject) else message)
                 delay(GeneralConfig.perUse * 1000L)
-                unlock(sender.id)
             }
+            unlock(sender.id)
         }
     }
 }

@@ -16,17 +16,17 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle.config
 
-import net.mamoe.mirai.console.data.AutoSavePluginConfig
+import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 
-object ReplyConfig : AutoSavePluginConfig("Reply") {
+object ReplyConfig : ReadOnlyPluginConfig("Reply") {
 
     @ValueDescription("海里没有物品时的回复")
     val noItem: String by value("海里暂时没有物品哦~")
 
     @ValueDescription("捡起漂流瓶的回复")
-    val pickupBottle: String by value("你在海边捡到了一个来自【%source】的漂流瓶，打开瓶子，里面有一张纸条，写着：\n")
+    val pickupBottle: String by value("序号: %index\n你在海边捡到了一个来自【%source】的漂流瓶，打开瓶子，里面有一张纸条，写着：\n")
 
     @ValueDescription("捡起尸体的回复")
     val pickupBody: String by value("海面飘来了【%who】的浮尸……\n他于【%time】")
@@ -53,9 +53,14 @@ object ReplyConfig : AutoSavePluginConfig("Reply") {
     val waitForNextMessage: String by value("请把想说的话写在纸条上发送出来吧~")
 
     @ValueDescription("等待漂流瓶内容超时的回复")
-    val timeoutMessage: String by value("是不是没有还没有想到要写什么呢？那待会再找我也行哦")
+    val timeout: String by value("是不是没有还没有想到要写什么呢？那待会再找我也行哦")
 
     @ValueDescription("漂流瓶内容不合规的回复")
-    val invalidMessage: String by value("不要往瓶子里塞奇怪的东西哦~")
+    val invalid: String by value("不要往瓶子里塞奇怪的东西哦~")
 
+    @ValueDescription("漂流瓶使用速度过快的回复")
+    val inCooldown: String by value("好快啊，能不能慢一点")
+
+    @ValueDescription("漂流瓶消息类型被禁用的回复")
+    val bannedMessageType: String by value("不要往瓶子里塞这种类型的消息哦~")
 }

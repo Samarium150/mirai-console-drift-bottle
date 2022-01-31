@@ -1,21 +1,48 @@
+/**
+ * Copyright (c) 2020-2021 Samarium
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>
+ */
 package io.github.samarium150.mirai.plugin.driftbottle.util
 
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
+import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle.reload
+import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle.save
 import io.github.samarium150.mirai.plugin.driftbottle.config.AdvancedConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
+import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
+import io.github.samarium150.mirai.plugin.driftbottle.data.comments
+import io.github.samarium150.mirai.plugin.driftbottle.data.useLock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import net.mamoe.mirai.console.command.CommandSender
+import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
+import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.message.data.At
-import net.mamoe.mirai.message.data.MessageChain
-import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.message.data.toMessageChain
+import net.mamoe.mirai.message.data.*
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 internal enum class CacheType {
     IMAGE
@@ -61,3 +88,63 @@ internal fun disableAt(messageChain: MessageChain, subject: Contact): MessageCha
         chain.toMessageChain()
     } else messageChain
 }
+
+internal fun <E> Stack<E>.put(item: E): Stack<E> {
+    addElement(item)
+    return this
+}
+
+@OptIn(ConsoleExperimentalApi::class)
+internal val forbidMessageKeys by lazy {
+    mutableListOf<MessageKey<SingleMessage>>().apply {
+        AdvancedConfig.saveMessageTypes.forEach { (type, bool) ->
+            if (!bool) add(type.toMessageKey())
+        }
+    }.toTypedArray()
+}
+
+internal fun ReadOnlyPluginConfig.alsoSave() {
+    reload()
+    save()
+}
+
+@OptIn(ExperimentalContracts::class)
+internal suspend fun CommandSender.isNotOutOfRange(index: Int?): Boolean {
+    contract {
+        returns(true) implies (index != null)
+    }
+    return when (index) {
+        null -> {
+            subject?.sendMessage("请尝试输入序号") ?: MiraiConsoleDriftBottle.logger.error("控制台使用请输入序号")
+            false
+        }
+        !in 0 until Sea.contents.size -> {
+            sendMessage("数字超出范围！")
+            false
+        }
+        else -> true
+    }
+}
+
+internal val indexOfBottle = mutableMapOf<Long, Stack<Int>>()
+
+internal fun Long.timestampToString(): String {
+    return Date(this)
+        .toInstant()
+        .atZone(ZoneId.of("Asia/Shanghai"))
+        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+}
+
+internal suspend fun rearrangeComments(from: Int) {
+    MiraiConsoleDriftBottle.launch {
+        useLock {
+            comments.remove(from)
+            comments.filter { (t, _) -> t > from }.forEach { (t, _) ->
+                comments[t - 1] = comments.getValue(t)
+                comments.remove(t)
+            }
+        }
+    }
+}
+
+internal val Long.seconds get() = (this / 1000).toInt()

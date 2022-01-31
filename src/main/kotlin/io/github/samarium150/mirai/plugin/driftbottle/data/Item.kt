@@ -16,24 +16,17 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle.data
 
-import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
 import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
 import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
-import io.github.samarium150.mirai.plugin.driftbottle.util.CacheType
-import io.github.samarium150.mirai.plugin.driftbottle.util.cacheFolderByType
-import io.github.samarium150.mirai.plugin.driftbottle.util.saveFrom
+import io.github.samarium150.mirai.plugin.driftbottle.data.Item.Type.BODY
+import io.github.samarium150.mirai.plugin.driftbottle.data.Item.Type.BOTTLE
+import io.github.samarium150.mirai.plugin.driftbottle.util.*
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.contact.Contact
-import net.mamoe.mirai.message.data.Image
+import net.mamoe.mirai.message.data.*
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
-import net.mamoe.mirai.message.data.MessageChain
-import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
-import java.io.FileNotFoundException
 import java.net.URL
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Serializable
@@ -45,10 +38,10 @@ class Item {
     }
 
     val type: Type
-    private val owner: Owner
-    private val source: Source?
+    val owner: Owner
+    val source: Source?
     private var content: String? = null
-    private val timestamp = Date().time
+    val timestamp = Date().time
 
     constructor(type: Type, owner: Owner, source: Source?) {
         this.type = type
@@ -63,15 +56,10 @@ class Item {
         this.content = content
     }
 
-    suspend fun toMessageChain(contact: Contact): MessageChain {
-        return buildMessageChain {
+    suspend fun toMessage(contact: Contact, index: Int): Message {
+        val messageChain = buildMessageChain {
             when (type) {
-                Type.BOTTLE -> {
-                    var from = "$owner"
-                    if (source != null)
-                        from = "${source}的" + from
-                    else
-                        from += "悄悄留下"
+                BOTTLE -> {
                     var chainJson = content ?: throw NoSuchElementException("未知错误")
                     if (GeneralConfig.cacheImage)
                         Image.IMAGE_ID_REGEX.findAll(chainJson).forEach {
@@ -81,20 +69,34 @@ class Item {
                                 val image = file.uploadAsImage(contact)
                                 if (imageId != image.imageId)
                                     chainJson = chainJson.replace(imageId, image.imageId)
-                            }.onFailure { e ->
-                                if (e is FileNotFoundException) runCatching {
-                                    val image = Image.fromId(imageId)
-                                    file.saveFrom(image.queryUrl())
-                                }.onFailure {
-                                    MiraiConsoleDriftBottle.logger.error(e)
-                                } else
-                                    MiraiConsoleDriftBottle.logger.error(e)
+                            }.onFailure {
+                                val image = Image(imageId)
+                                file.saveFrom(image.queryUrl())
                             }
                         }
-                    add(ReplyConfig.pickupBottle.replace("%source", from))
-                    add(MessageChain.deserializeFromJsonString(chainJson))
+                    if (!GeneralConfig.displayInForward) {
+                        var from = owner.name
+                        if (source != null)
+                            from = "${source}的$from\n"
+                        else
+                            from += "悄悄留下"
+                        var comments = ""
+                        CommentData.comments[index]?.let {
+                            if (it.isNotEmpty()) comments += "\n此漂流瓶的评论为"
+                            it.forEach { each ->
+                                comments += "\n${each.senderName}: ${each.content}"
+                            }
+                        }
+                        add(
+                            ReplyConfig.pickupBottle
+                                .replace("%source", from)
+                                .replace("%index", (index + 1).toString())
+                        )
+                        add(MessageChain.deserializeFromJsonString(chainJson))
+                        add(comments) // 本来想让用户自定义评论位置的，但是...摆了
+                    } else add(MessageChain.deserializeFromJsonString(chainJson))
                 }
-                Type.BODY -> {
+                BODY -> {
                     val avatarStream = URL(owner.avatarUrl).openStream()
                     val img = avatarStream.use { it.uploadAsImage(contact) }
                     add(img)
@@ -102,19 +104,27 @@ class Item {
                         PlainText(
                             ReplyConfig.pickupBody
                                 .replace("%who", owner.name)
-                                .replace(
-                                    "%time",
-                                    Date(timestamp)
-                                        .toInstant()
-                                        .atZone(ZoneId.of("Asia/Shanghai"))
-                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                                )
+                                .replace("%time", timestamp.timestampToString())
                         )
                     )
                     val where = if (source != null)
                         ReplyConfig.inGroup.replace("%group", source.toString())
                     else ReplyConfig.inPrivate
                     add(where)
+                }
+            }
+        }
+        return if (!GeneralConfig.displayInForward || messageChain.any {
+                when (it) {
+                    is Audio, is FlashImage -> true
+                    else -> false
+                }
+            }) messageChain
+        else buildForwardMessage(contact, CustomForwardMsgDisplay(index + 1, this)) {
+            add(owner.id, owner.name, messageChain, timestamp.seconds)
+            CommentData.comments[index]?.let {
+                it.forEach { each ->
+                    add(each.senderId, each.senderName, PlainText(each.content), each.timestamp.seconds)
                 }
             }
         }

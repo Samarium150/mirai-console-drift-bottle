@@ -16,11 +16,11 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle.config
 
-import net.mamoe.mirai.console.data.AutoSavePluginConfig
+import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 
-object GeneralConfig : AutoSavePluginConfig("General") {
+object GeneralConfig : ReadOnlyPluginConfig("General") {
 
     @ValueDescription("捡起命令不减少漂流瓶总数")
     val incrementalBottle by value(true)
@@ -39,4 +39,7 @@ object GeneralConfig : AutoSavePluginConfig("General") {
 
     @ValueDescription("随机延迟回复的时间区间 (单位: 毫秒)")
     val randomDelayInterval: Pair<Long, Long> by value(Pair(1000L, 1500L))
+
+    @ValueDescription("使用转发消息展示漂流瓶")
+    val displayInForward by value(false)
 }

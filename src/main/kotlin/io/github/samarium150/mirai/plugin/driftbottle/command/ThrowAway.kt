@@ -52,24 +52,31 @@ object ThrowAway : SimpleCommand(
     suspend fun CommandSenderOnMessage<*>.handle(vararg messages: Message = arrayOf()) {
         val sender = fromEvent.sender
         val subject = fromEvent.subject
-        if (!lock(sender.id)) return
+        if (!lock(sender.id)) {
+            sendMessage(ReplyConfig.inCooldown)
+            return
+        }
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
         else {
-            randomDelay().also {
-                sendMessage(ReplyConfig.waitForNextMessage)
-            }
+            randomDelay()
+            sendMessage(ReplyConfig.waitForNextMessage)
             runCatching {
                 fromEvent.nextMessage(30_000)
             }.onFailure {
-                sendMessage(ReplyConfig.timeoutMessage)
-            }.getOrNull() ?: run {
                 unlock(sender.id)
-                return@handle
+                sendMessage(ReplyConfig.timeout)
+            }.getOrNull() ?: return
+        }
+        forbidMessageKeys.forEach {
+            if (chain.contains(it)) {
+                unlock(sender.id)
+                sendMessage(ReplyConfig.bannedMessageType)
+                return
             }
         }
         if (GeneralConfig.enableContentCensor) runCatching {
             if (!ContentCensor.determine(chain)) {
-                sendMessage(ReplyConfig.invalidMessage)
+                sendMessage(ReplyConfig.invalid)
                 return
             }
         }.onFailure {
@@ -94,18 +101,16 @@ object ThrowAway : SimpleCommand(
         Sea.contents.add(bottle)
         val parts = ReplyConfig.throwAway.split("%content")
         runCatching {
-            randomDelay().also {
-                if (parts.size == 1) sendMessage(parts[0])
-                else
-                    sendMessage(buildMessageChain {
-                        +PlainText(parts[0])
-                        +disableAt(chain, subject)
-                        +PlainText(parts[1])
-                    })
-            }
-        }.also {
+            randomDelay()
+            if (parts.size == 1) sendMessage(parts[0])
+            else
+                sendMessage(buildMessageChain {
+                    +PlainText(parts[0])
+                    +disableAt(chain, subject)
+                    +PlainText(parts[1])
+                })
             delay(GeneralConfig.perUse * 1000L)
-            unlock(sender.id)
         }
+        unlock(sender.id)
     }
 }

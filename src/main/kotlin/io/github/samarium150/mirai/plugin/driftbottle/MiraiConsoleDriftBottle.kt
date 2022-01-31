@@ -16,15 +16,12 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle
 
-import io.github.samarium150.mirai.plugin.driftbottle.command.JumpInto
-import io.github.samarium150.mirai.plugin.driftbottle.command.Pickup
-import io.github.samarium150.mirai.plugin.driftbottle.command.ThrowAway
-import io.github.samarium150.mirai.plugin.driftbottle.config.CommandConfig
-import io.github.samarium150.mirai.plugin.driftbottle.config.ContentCensorConfig
-import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
-import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.driftbottle.command.*
+import io.github.samarium150.mirai.plugin.driftbottle.config.*
+import io.github.samarium150.mirai.plugin.driftbottle.data.CommentData
 import io.github.samarium150.mirai.plugin.driftbottle.data.ContentCensorToken
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
+import io.github.samarium150.mirai.plugin.driftbottle.util.alsoSave
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
@@ -37,7 +34,7 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-drift-bottle",
         name = "Drift Bottle",
-        version = "1.5.0",
+        version = "1.6.0",
     ) {
         author("Samarium150")
         info("简单的漂流瓶插件")
@@ -46,19 +43,33 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
 
     lateinit var client: HttpClient
 
-    override fun onEnable() {
-        // 重载数据
-        GeneralConfig.reload()
-        ReplyConfig.reload()
-        CommandConfig.reload()
+    private fun init() {
+        // 重载只读配置
+        AdvancedConfig.alsoSave()
+        GeneralConfig.alsoSave()
+        ReplyConfig.alsoSave()
+        CommandConfig.alsoSave()
+
+        // 重载配置
         ContentCensorConfig.reload()
+
+        // 重载数据
         ContentCensorToken.reload()
+        CommentData.reload()
         Sea.reload()
 
         // 注册命令
         JumpInto.register()
         Pickup.register()
         ThrowAway.register()
+        SeaOperation.register()
+        if (GeneralConfig.incrementalBottle)
+            Comment.register()
+    }
+
+    override fun onEnable() {
+        // 初始化插件
+        init()
 
         // 初始化 HTTP 客户端
         if (GeneralConfig.enableContentCensor)

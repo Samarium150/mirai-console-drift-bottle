@@ -48,10 +48,13 @@ object JumpInto : SimpleCommand(
     @Handler
     suspend fun CommandSender.handle() {
         val sender = user
-        if (sender == null) randomDelay().also {
+        if (sender == null)
             sendMessage(ReplyConfig.jumpInto.replace("%num", Sea.contents.size.toString()))
-        } else {
-            if (!lock(sender.id)) return
+        else {
+            if (!lock(sender.id)) {
+                sendMessage(ReplyConfig.inCooldown)
+                return
+            }
             val subject = subject
             val owner = Owner(
                 sender.id,
@@ -64,12 +67,12 @@ object JumpInto : SimpleCommand(
             ) else null
             val body = Item(Item.Type.BODY, owner, source)
             Sea.contents.add(body)
-            randomDelay().also {
-                sendMessage(ReplyConfig.jumpInto.replace("%num", Sea.contents.size.toString())).also {
-                    delay(GeneralConfig.perUse * 1000L)
-                    unlock(sender.id)
-                }
+            runCatching {
+                randomDelay()
+                sendMessage(ReplyConfig.jumpInto.replace("%num", (Sea.contents.size - 1).toString()))
+                delay(GeneralConfig.perUse * 1000L)
             }
+            unlock(sender.id)
         }
     }
 }
