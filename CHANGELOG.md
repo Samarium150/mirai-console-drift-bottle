@@ -9,6 +9,7 @@
     - add a composite command for querying and deleting items in the sea
     - add an option for disabling certain message types
     - add a reply when commands invocation is throttled
+    - add an option for display contents by using forward message
 
 <a name="1.5.0"></a>
 
