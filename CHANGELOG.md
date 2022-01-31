@@ -1,3 +1,15 @@
+<a name="1.6.0"></a>
+
+## 1.6.0 (2022/01/31)
+
+## Features
+
+* enhancement (#13) ([71b33838](https://github.com/Samarium150/mirai-console-simple-echo/commits/71b33838))
+    - add commenting drift bottle feature
+    - add a composite command for querying and deleting items in the sea
+    - add an option for disabling certain message types
+    - add a reply when commands invocation is throttled
+
 <a name="1.5.0"></a>
 
 ## 1.5.0 (2022/01/18)
@@ -16,8 +28,7 @@
 
 ## Features
 
-* separate settings of incremental
-  items ([aadebd66](https://github.com/Samarium150/mirai-console-simple-echo/commits/aadebd66),
+* separate settings of incremental items ([aadebd66](https://github.com/Samarium150/mirai-console-simple-echo/commits/aadebd66),
   closes [#8](https://github.com/Samarium150/mirai-console-simple-echo/issues/issues/8))
 
 <a name="1.3.1"></a>
