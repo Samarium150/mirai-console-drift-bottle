@@ -1,3 +1,12 @@
+<a name="1.7.0"></a>
+
+## 1.7.0 (2022/02/09)
+
+## Features
+
+* add content checking when
+  comment ([3126a023](https://github.com/Samarium150/mirai-console-simple-echo/commits/3126a023))
+
 <a name="1.6.1"></a>
 
 # 1.6.1 (2022/02/09)
