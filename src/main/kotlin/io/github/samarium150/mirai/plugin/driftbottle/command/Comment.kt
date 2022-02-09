@@ -18,7 +18,10 @@ package io.github.samarium150.mirai.plugin.driftbottle.command
 
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
 import io.github.samarium150.mirai.plugin.driftbottle.config.CommandConfig
+import io.github.samarium150.mirai.plugin.driftbottle.config.GeneralConfig
+import io.github.samarium150.mirai.plugin.driftbottle.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.driftbottle.data.CommentData
+import io.github.samarium150.mirai.plugin.driftbottle.util.ContentCensor
 import io.github.samarium150.mirai.plugin.driftbottle.util.indexOfBottle
 import io.github.samarium150.mirai.plugin.driftbottle.util.isNotOutOfRange
 import io.github.samarium150.mirai.plugin.driftbottle.util.randomDelay
@@ -60,6 +63,14 @@ object Comment : SimpleCommand(
             return
         }
         val commentStr = comment.content
+        if (GeneralConfig.enableContentCensor) runCatching {
+            if (!ContentCensor.determine(commentStr)) {
+                sendMessage(ReplyConfig.invalid)
+                return
+            }
+        }.onFailure {
+            MiraiConsoleDriftBottle.logger.error(it)
+        }
         val realIndex = index?.minus(1)
         if (isNotOutOfRange(realIndex)) {
             val nick = fromEvent.sender.nameCardOrNick

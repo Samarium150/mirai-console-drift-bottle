@@ -63,6 +63,18 @@ object ContentCensor {
         ContentCensorToken.expiresIn = credential.expires_in
     }
 
+    suspend fun determine(content: String): Boolean {
+        val response = client.submitForm<TextCensorResponseBody>(
+            url = "${URLS.TEXT_CENSOR.url}?access_token=${ContentCensorToken.accessToken}",
+            formParameters = parametersOf("text", content)
+        )
+        logger.info(response.toString())
+        return if (response.error_code != null) {
+            logger.error(response.error_msg)
+            true
+        } else response.conclusion != "不合规"
+    }
+
     suspend fun determine(chain: MessageChain): Boolean {
         if (Date().time >= ContentCensorToken.timestamp + ContentCensorToken.expiresIn * 1000
             || ContentCensorToken.accessToken.isEmpty()
