@@ -34,7 +34,7 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-drift-bottle",
         name = "Drift Bottle",
-        version = "1.6.0",
+        version = "1.6.1",
     ) {
         author("Samarium150")
         info("简单的漂流瓶插件")

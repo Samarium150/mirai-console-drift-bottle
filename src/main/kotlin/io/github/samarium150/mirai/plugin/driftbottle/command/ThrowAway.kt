@@ -77,6 +77,7 @@ object ThrowAway : SimpleCommand(
         if (GeneralConfig.enableContentCensor) runCatching {
             if (!ContentCensor.determine(chain)) {
                 sendMessage(ReplyConfig.invalid)
+                unlock(sender.id)
                 return
             }
         }.onFailure {
