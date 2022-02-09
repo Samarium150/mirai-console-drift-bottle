@@ -1,3 +1,12 @@
+<a name="1.6.1"></a>
+
+# 1.6.1 (2022/02/09)
+
+## Bug Fixes
+
+* correctly release lock when content censor is
+  enabled ([72716575](https://github.com/Samarium150/mirai-console-simple-echo/commits/72716575))
+
 <a name="1.6.0"></a>
 
 ## 1.6.0 (2022/01/31)
