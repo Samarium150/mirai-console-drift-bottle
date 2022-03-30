@@ -18,21 +18,29 @@ package io.github.samarium150.mirai.plugin.driftbottle.command
 
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
 import io.github.samarium150.mirai.plugin.driftbottle.config.CommandConfig
+import io.github.samarium150.mirai.plugin.driftbottle.data.Item
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
 import io.github.samarium150.mirai.plugin.driftbottle.util.*
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
+import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
+import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 
 /**
  * @author LaoLittle
  */
+@Suppress("unused")
 object SeaOperation : CompositeCommand(
     MiraiConsoleDriftBottle,
     primaryName = "sea",
     secondaryNames = CommandConfig.seaOperation,
     description = "漂流瓶操作复合指令"
 ) {
-    @Suppress("unused")
+
+    @ExperimentalCommandDescriptors
+    @ConsoleExperimentalApi
+    override val prefixOptional: Boolean = true
+
     @SubCommand("del", "rm")
     suspend fun CommandSender.remove(
         index: Int? = subject?.let { sub ->
@@ -52,7 +60,6 @@ object SeaOperation : CompositeCommand(
         }
     }
 
-    @Suppress("unused")
     @SubCommand("query", "get")
     suspend fun CommandSender.query(
         index: Int? = subject?.let { sub ->
@@ -74,5 +81,16 @@ object SeaOperation : CompositeCommand(
             }
             sendMessage(result.getOrNull() ?: "无法找到漂流瓶$index")
         }
+    }
+
+    @SubCommand("status")
+    suspend fun CommandSender.status() {
+        sendMessage(
+            """
+            目前海中物品总数: ${Sea.contents.size}
+            其中漂流瓶数为: ${Sea.contents.count { it.type == Item.Type.BOTTLE }}
+            尸体数为: ${Sea.contents.count { it.type == Item.Type.BODY }}
+            """.trimIndent()
+        )
     }
 }

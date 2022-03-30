@@ -49,7 +49,7 @@ object Comment : SimpleCommand(
     override val prefixOptional: Boolean = true
 
     override val usage: String
-        get() = "评论 内容 漂流瓶序号"
+        get() = super.usage + " <内容> [漂流瓶序号]"
 
     @Suppress("unused")
     @Handler
