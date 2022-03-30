@@ -1,3 +1,11 @@
+<a name="1.8.0"></a>
+
+## 1.8.0 (2022/03/30)
+
+## Features
+
+* add status subcommand ([8ff768e4](https://github.com/Samarium150/mirai-console-simple-echo/commits/8ff768e4))
+
 <a name="1.7.0"></a>
 
 ## 1.7.0 (2022/02/09)
@@ -13,8 +21,7 @@
 
 ## Bug Fixes
 
-* correctly release lock when content censor is
-  enabled ([72716575](https://github.com/Samarium150/mirai-console-simple-echo/commits/72716575))
+* correctly release lock when content censor is enabled ([72716575](https://github.com/Samarium150/mirai-console-simple-echo/commits/72716575))
 
 <a name="1.6.0"></a>
 
