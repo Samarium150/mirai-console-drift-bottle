@@ -1,3 +1,11 @@
+<a name="1.9.0"></a>
+## 1.9.0 (2022/05/06)
+
+
+## Features
+
+* show index when throwing (#17) ([3c002ee6](https://github.com/Samarium150/mirai-console-simple-echo/commits/3c002ee6), closes [#16](https://github.com/Samarium150/mirai-console-simple-echo/issues/issues/16))
+
 <a name="1.8.0"></a>
 
 ## 1.8.0 (2022/03/30)
