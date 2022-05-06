@@ -47,6 +47,7 @@ object ThrowAway : SimpleCommand(
     @ExperimentalCommandDescriptors
     override val prefixOptional = true
 
+    @OptIn(ConsoleExperimentalApi::class)
     @Suppress("unused")
     @Handler
     suspend fun CommandSenderOnMessage<*>.handle(vararg messages: Message = arrayOf()) {
@@ -59,13 +60,17 @@ object ThrowAway : SimpleCommand(
         val chain = if (messages.isNotEmpty()) messageChainOf(*messages)
         else {
             randomDelay()
-            sendMessage(ReplyConfig.waitForNextMessage)
-            runCatching {
+            val waitMsg = sendMessage(ReplyConfig.waitForNextMessage)
+            try {
                 fromEvent.nextMessage(30_000)
-            }.onFailure {
+            } catch (e: Throwable) {
                 unlock(sender.id)
                 sendMessage(ReplyConfig.timeout)
-            }.getOrNull() ?: return
+                return
+            } finally {
+                randomDelay()
+                waitMsg?.recall()
+            }
         }
         forbidMessageKeys.forEach {
             if (chain.contains(it)) {
@@ -74,7 +79,7 @@ object ThrowAway : SimpleCommand(
                 return
             }
         }
-        if (GeneralConfig.enableContentCensor) runCatching {
+        if (GeneralConfig.enableContentCensor) kotlin.runCatching {
             if (!ContentCensor.determine(chain)) {
                 sendMessage(ReplyConfig.invalid)
                 unlock(sender.id)
@@ -100,16 +105,20 @@ object ThrowAway : SimpleCommand(
             }
         val bottle = Item(Item.Type.BOTTLE, owner, source, chainJson)
         Sea.contents.add(bottle)
-        val parts = ReplyConfig.throwAway.split("%content")
-        runCatching {
+        val parts = ReplyConfig.throwAway.replace("%num", Sea.contents.size.toString()).split("%content")
+        kotlin.runCatching {
             randomDelay()
-            if (parts.size == 1) sendMessage(parts[0])
-            else
-                sendMessage(buildMessageChain {
+            when (parts.size) {
+                1 -> sendMessage(parts[0])
+                2 -> sendMessage(buildMessageChain {
                     +PlainText(parts[0])
                     +disableAt(chain, subject)
                     +PlainText(parts[1])
                 })
+                else -> MiraiConsoleDriftBottle.logger.error(
+                    "%content 变量数量不正确, 请修改配置文件 (${MiraiConsoleDriftBottle.configFolder.resolve(GeneralConfig.saveName + ".yml")})"
+                )
+            }
             delay(GeneralConfig.perUse * 1000L)
         }
         unlock(sender.id)
