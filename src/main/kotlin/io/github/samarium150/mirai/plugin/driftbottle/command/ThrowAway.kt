@@ -105,7 +105,7 @@ object ThrowAway : SimpleCommand(
             }
         val bottle = Item(Item.Type.BOTTLE, owner, source, chainJson)
         Sea.contents.add(bottle)
-        val parts = ReplyConfig.throwAway.replace("%num", Sea.contents.size.toString()).split("%content")
+        val parts = ReplyConfig.throwAway.replace("%num", (Sea.contents.size + 1).toString()).split("%content")
         kotlin.runCatching {
             randomDelay()
             when (parts.size) {
