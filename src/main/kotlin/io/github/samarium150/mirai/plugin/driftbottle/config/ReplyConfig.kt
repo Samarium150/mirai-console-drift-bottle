@@ -38,7 +38,7 @@ object ReplyConfig : ReadOnlyPluginConfig("Reply") {
     val inGroup: String by value("在【%group】处的海边沉入深海……")
 
     @ValueDescription("丢漂流瓶的回复")
-    val throwAway: String by value("你将一个写着【%content】的纸条塞入瓶中扔进大海，希望有人捞到吧~")
+    val throwAway: String by value("你将一个写着【%content】的纸条塞入瓶中扔进大海（序号:%num），希望有人捞到吧~")
 
     @ValueDescription("跳进大海的回复")
     val jumpInto: String by value(
