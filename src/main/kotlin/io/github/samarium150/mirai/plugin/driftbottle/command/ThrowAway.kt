@@ -47,7 +47,7 @@ object ThrowAway : SimpleCommand(
     @ExperimentalCommandDescriptors
     override val prefixOptional = true
 
-    @OptIn(ConsoleExperimentalApi::class)
+    @ConsoleExperimentalApi
     @Suppress("unused")
     @Handler
     suspend fun CommandSenderOnMessage<*>.handle(vararg messages: Message = arrayOf()) {
@@ -79,7 +79,7 @@ object ThrowAway : SimpleCommand(
                 return
             }
         }
-        if (GeneralConfig.enableContentCensor) kotlin.runCatching {
+        if (GeneralConfig.enableContentCensor) runCatching {
             if (!ContentCensor.determine(chain)) {
                 sendMessage(ReplyConfig.invalid)
                 unlock(sender.id)
@@ -106,7 +106,7 @@ object ThrowAway : SimpleCommand(
         val bottle = Item(Item.Type.BOTTLE, owner, source, chainJson)
         Sea.contents.add(bottle)
         val parts = ReplyConfig.throwAway.replace("%num", (Sea.contents.size + 1).toString()).split("%content")
-        kotlin.runCatching {
+        runCatching {
             randomDelay()
             when (parts.size) {
                 1 -> sendMessage(parts[0])
