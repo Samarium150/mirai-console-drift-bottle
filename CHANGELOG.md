@@ -1,3 +1,11 @@
+<a name="1.9.1"></a>
+# 1.9.1 (2022/05/30)
+
+
+## Bug Fixes
+
+* use ConcurrentHashMap (#20) ([fa7aad9d](https://github.com/Samarium150/mirai-console-simple-echo/commits/fa7aad9d))
+
 <a name="1.9.0"></a>
 ## 1.9.0 (2022/05/06)
 
