@@ -1,3 +1,11 @@
+<a name="1.9.2"></a>
+# 1.9.2 (2022/05/30)
+
+
+## Bug Fixes
+
+* correct logic error in ConcurrentHashSet ([e9e66960](https://github.com/Samarium150/mirai-console-simple-echo/commits/e9e66960))
+
 <a name="1.9.1"></a>
 # 1.9.1 (2022/05/30)
 
