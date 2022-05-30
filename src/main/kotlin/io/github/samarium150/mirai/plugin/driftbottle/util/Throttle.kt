@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 Samarium
+ * Copyright (c) 2020-2022 Samarium
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,18 +16,25 @@
  */
 package io.github.samarium150.mirai.plugin.driftbottle.util
 
-import kotlinx.coroutines.sync.Mutex
+import java.util.concurrent.ConcurrentHashMap
 
-private val throttleMap = mutableMapOf<Long, Mutex>()
+private val throttleSet = ConcurrentHashSet<Long>()
 
-private fun getLock(id: Long): Mutex {
-    return throttleMap.getOrPut(id) { Mutex() }
+class ConcurrentHashSet<T: Any>(initialCapacity: Int) {
+    constructor(): this(0)
+    private val map = ConcurrentHashMap<T, Unit>(initialCapacity)
+
+    fun contains(value: T) = null != map[value]
+
+    fun add(value: T) = null == map.put(value, Unit)
+
+    fun remove(value: T) = null != map.remove(value)
 }
 
 fun lock(id: Long): Boolean {
-    return getLock(id).tryLock()
+    return !throttleSet.add(id)
 }
 
 fun unlock(id: Long) {
-    throttleMap.remove(id)?.unlock()
+    throttleSet.remove(id)
 }
