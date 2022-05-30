@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 Samarium
+ * Copyright (c) 2020-2022 Samarium
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -34,7 +34,7 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-drift-bottle",
         name = "Drift Bottle",
-        version = "1.9.0",
+        version = "1.9.1",
     ) {
         author("Samarium150")
         info("简单的漂流瓶插件")

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 Samarium
+ * Copyright (c) 2020-2022 Samarium
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -51,7 +51,6 @@ object Comment : SimpleCommand(
     override val usage: String
         get() = super.usage + " <内容> [漂流瓶序号]"
 
-    @Suppress("unused")
     @Handler
     suspend fun CommandSenderOnMessage<*>.handle(
         comment: SingleMessage,

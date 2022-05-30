@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 Samarium
+ * Copyright (c) 2020-2022 Samarium
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -29,7 +29,6 @@ import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 /**
  * @author LaoLittle
  */
-@Suppress("unused")
 object SeaOperation : CompositeCommand(
     MiraiConsoleDriftBottle,
     primaryName = "sea",

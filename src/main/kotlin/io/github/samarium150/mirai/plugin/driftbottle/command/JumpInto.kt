@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 Samarium
+ * Copyright (c) 2020-2022 Samarium
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -44,7 +44,6 @@ object JumpInto : SimpleCommand(
     @ExperimentalCommandDescriptors
     override val prefixOptional = true
 
-    @Suppress("unused")
     @Handler
     suspend fun CommandSender.handle() {
         val sender = user
