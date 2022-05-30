@@ -32,7 +32,7 @@ class ConcurrentHashSet<T: Any>(initialCapacity: Int) {
 }
 
 fun lock(id: Long): Boolean {
-    return !throttleSet.add(id)
+    return throttleSet.add(id)
 }
 
 fun unlock(id: Long) {
