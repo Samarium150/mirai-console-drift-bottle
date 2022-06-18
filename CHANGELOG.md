@@ -1,3 +1,10 @@
+<a name="1.10.0"></a>
+## 1.10.0 (2022/06/18)
+
+
+## Features
+
+* support mirai-console 2.12 ([59875bda](https://github.com/Samarium150/mirai-console-simple-echo/commits/59875bda))
 <a name="1.9.2"></a>
 # 1.9.2 (2022/05/30)
 
