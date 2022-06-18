@@ -5,16 +5,14 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.11.1"
+    id("net.mamoe.mirai-console") version "2.12.0-RC"
     id("com.geoffgranum.gradle-conventional-changelog") version "+"
 }
 
 group = "io.github.samarium150"
-version = "1.9.2"
+version = "1.10.0"
 
 repositories {
-    mavenLocal()
-    maven("https://maven.aliyun.com/repository/central")
     mavenCentral()
 }
 
