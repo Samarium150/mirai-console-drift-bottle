@@ -1,3 +1,11 @@
+<a name="1.11.0"></a>
+## 1.11.0 (2022/07/10)
+
+
+## Features
+
+* upgrade to ktor 2 ([f798f408](https://github.com/Samarium150/mirai-console-simple-echo/commits/f798f408))
+
 <a name="1.10.0"></a>
 ## 1.10.0 (2022/06/18)
 
