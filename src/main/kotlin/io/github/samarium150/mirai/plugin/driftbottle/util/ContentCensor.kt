@@ -24,6 +24,7 @@ import io.github.samarium150.baidu.aip.response.TextCensorResponseBody
 import io.github.samarium150.mirai.plugin.driftbottle.MiraiConsoleDriftBottle
 import io.github.samarium150.mirai.plugin.driftbottle.config.ContentCensorConfig
 import io.github.samarium150.mirai.plugin.driftbottle.data.ContentCensorToken
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
@@ -49,25 +50,24 @@ object ContentCensor {
         "client_secret=${ContentCensorConfig.SECRET_KEY}"
 
     private suspend fun getCredential() {
-        val credential: Credential?
-        try {
+        val credential: Credential = runCatching {
             logger.info(oauth)
-            credential = client.get<Credential>(oauth)
-            logger.info("获取AccessToken成功")
-        } catch (e: Exception) {
+            client.get(oauth).body() as Credential
+        }.onFailure {
             logger.error("获取AccessToken失败")
-            throw e
-        }
+        }.onSuccess {
+            logger.info("获取AccessToken成功")
+        }.getOrThrow()
         ContentCensorToken.timestamp = Date().time
         ContentCensorToken.accessToken = credential.access_token
         ContentCensorToken.expiresIn = credential.expires_in
     }
 
     suspend fun determine(content: String): Boolean {
-        val response = client.submitForm<TextCensorResponseBody>(
+        val response: TextCensorResponseBody = client.submitForm(
             url = "${URLS.TEXT_CENSOR.url}?access_token=${ContentCensorToken.accessToken}",
             formParameters = parametersOf("text", content)
-        )
+        ).body()
         logger.info(response.toString())
         return if (response.error_code != null) {
             logger.error(response.error_msg)
@@ -82,10 +82,10 @@ object ContentCensor {
         var flag = true
         for (message in chain) {
             val response: ResponseBody = when (message) {
-                is PlainText -> client.submitForm<TextCensorResponseBody>(
+                is PlainText -> client.submitForm(
                     url = "${URLS.TEXT_CENSOR.url}?access_token=${ContentCensorToken.accessToken}",
                     formParameters = parametersOf("text", message.content)
-                )
+                ).body<TextCensorResponseBody>()
                 is Image -> {
                     val buffer = withContext(Dispatchers.IO) {
                         ImageIO.read(URL(message.queryUrl()))
@@ -95,10 +95,10 @@ object ContentCensor {
                         ImageIO.write(buffer, message.imageType.name, output)
                     }
                     val base64 = Base64.getEncoder().encodeToString(output.toByteArray())
-                    client.submitForm<ImageCensorResponseBody>(
+                    client.submitForm(
                         url = "${URLS.IMAGE_CENSOR.url}?access_token=${ContentCensorToken.accessToken}",
                         formParameters = parametersOf("image", base64)
-                    )
+                    ).body<ImageCensorResponseBody>()
                 }
                 else -> continue
             }

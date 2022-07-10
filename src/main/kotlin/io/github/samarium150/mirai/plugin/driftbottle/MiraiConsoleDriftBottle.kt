@@ -23,8 +23,10 @@ import io.github.samarium150.mirai.plugin.driftbottle.data.ContentCensorToken
 import io.github.samarium150.mirai.plugin.driftbottle.data.Sea
 import io.github.samarium150.mirai.plugin.driftbottle.util.alsoSave
 import io.ktor.client.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.engine.okhttp.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
@@ -34,14 +36,14 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-drift-bottle",
         name = "Drift Bottle",
-        version = "1.10.0",
+        version = "1.11.0",
     ) {
         author("Samarium150")
         info("简单的漂流瓶插件")
     }
 ) {
 
-    lateinit var client: HttpClient
+    internal lateinit var client: HttpClient
 
     private fun init() {
         // 重载只读配置
@@ -73,10 +75,9 @@ object MiraiConsoleDriftBottle : KotlinPlugin(
 
         // 初始化 HTTP 客户端
         if (GeneralConfig.enableContentCensor)
-            client = HttpClient {
-                install(JsonFeature) {
-                    serializer = KotlinxSerializer(
-                        kotlinx.serialization.json.Json {
+            client = HttpClient(OkHttp) {
+                install(ContentNegotiation) {
+                    json(Json {
                             prettyPrint = true
                             isLenient = true
                             ignoreUnknownKeys = true
