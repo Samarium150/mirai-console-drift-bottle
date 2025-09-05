@@ -55,7 +55,7 @@ object SeaOperation : CompositeCommand(
                 if (e !is IndexOutOfBoundsException) MiraiConsoleDriftBottle.logger.error(e)
             }
             randomDelay()
-            sendMessage(if (result.isSuccess) "已删除漂流瓶$index" else "删除漂流瓶$index 失败")
+            sendMessage(if (result.isSuccess) "已删除漂流瓶 $index" else "删除漂流瓶$index 失败")
         }
     }
 

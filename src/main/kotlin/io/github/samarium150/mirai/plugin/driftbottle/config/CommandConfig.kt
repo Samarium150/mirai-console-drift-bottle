@@ -26,10 +26,10 @@ object CommandConfig : ReadOnlyPluginConfig("Command") {
     val jumpInto by value(arrayOf("跳海", "跳进海里"))
 
     @ValueDescription("pickup命令的别名")
-    val pickup by value(arrayOf("捡漂流瓶"))
+    val pickup by value(arrayOf("捡漂流瓶", "捞漂流瓶"))
 
     @ValueDescription("throw-away命令的别名")
-    val throwAway by value(arrayOf("丢漂流瓶"))
+    val throwAway by value(arrayOf("丢漂流瓶", "扔漂流瓶"))
 
     @ValueDescription("comment命令的别名")
     val comment by value(arrayOf("评论"))

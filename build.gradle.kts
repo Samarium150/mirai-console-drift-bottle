@@ -1,31 +1,33 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    val kotlinVersion = "1.7.0"
+    val kotlinVersion = "1.8.10"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.12.0"
+    id("net.mamoe.mirai-console") version "2.16.0"
     id("com.geoffgranum.gradle-conventional-changelog") version "+"
 }
 
 group = "io.github.samarium150"
-version = "1.11.0"
+version = "1.11.1"
 
 repositories {
     mavenCentral()
+    maven("https://nexus.web.cern.ch/nexus/content/repositories/public/")
 }
 
 dependencies {
-    implementation("io.ktor:ktor-client-okhttp:2.0.3") {
+    implementation(platform("io.ktor:ktor-bom:2.3.13"))
+    implementation("io.ktor:ktor-client-okhttp") {
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains.kotlinx")
     }
-    implementation("io.ktor:ktor-client-content-negotiation:2.0.3") {
+    implementation("io.ktor:ktor-client-content-negotiation") {
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains.kotlinx")
     }
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.3") {
+    implementation("io.ktor:ktor-serialization-kotlinx-json") {
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains.kotlinx")
     }
