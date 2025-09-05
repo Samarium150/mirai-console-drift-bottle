@@ -104,7 +104,7 @@ object ThrowAway : SimpleCommand(
             }
         val bottle = Item(Item.Type.BOTTLE, owner, source, chainJson)
         Sea.contents.add(bottle)
-        val parts = ReplyConfig.throwAway.replace("%num", (Sea.contents.size + 1).toString()).split("%content")
+        val parts = ReplyConfig.throwAway.replace("%num", (Sea.contents.size).toString()).split("%content")
         runCatching {
             randomDelay()
             when (parts.size) {
@@ -114,8 +114,13 @@ object ThrowAway : SimpleCommand(
                     +disableAt(chain, subject)
                     +PlainText(parts[1])
                 })
+
                 else -> MiraiConsoleDriftBottle.logger.error(
-                    "%content 变量数量不正确, 请修改配置文件 (${MiraiConsoleDriftBottle.configFolder.resolve(GeneralConfig.saveName + ".yml")})"
+                    "%content 变量数量不正确, 请修改配置文件 (${
+                        MiraiConsoleDriftBottle.configFolder.resolve(
+                            GeneralConfig.saveName + ".yml"
+                        )
+                    })"
                 )
             }
             delay(GeneralConfig.perUse * 1000L)
