@@ -1,4 +1,12 @@
 <a name="1.11.0"></a>
+## 1.11.1 (2025/09/05)
+
+
+## Bug Fixes
+
+* correct bottle indexing (#29) ([16b1c2f8](https://github.com/Samarium150/mirai-console-simple-echo/commits/16b1c2f8))
+
+<a name="1.11.0"></a>
 ## 1.11.0 (2022/07/10)
 
 
